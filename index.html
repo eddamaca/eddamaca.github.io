@@ -11,26 +11,47 @@
       color: #e0e0e0;
       margin: 20px;
     }
+    
+    /* Contenedor de datos */
     .container {
       max-width: 600px;
-      margin: auto;
+      margin: 20px auto;
       background: #1e1e1e;
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0px 0px 10px rgba(0,0,0,0.7);
     }
+    
+    /* Contenedor más ancho para indicaciones */
+    .indicaciones-container {
+      max-width: 900px;
+      margin: 20px auto;
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.7);
+    }
+    
     h1, h2 {
       text-align: center;
       color: #ffffff;
+      margin: 5px 0;
     }
+    
     /* Nuevo estilo para el nombre del doctor */
     .doctor-name {
       text-align: center;
       font-weight: bold;
       color: #ffffff;
-      margin-top: 5px;
-      margin-bottom: 20px;
+      margin: 5px 0 20px 0;
     }
+    
+    .section {
+      margin-bottom: 20px;
+      padding: 10px;
+      border-bottom: 1px solid #333;
+    }
+    
     /* Alineación uniforme de cada apartado */
     .checkbox-group, 
     .soluciones, 
@@ -38,33 +59,43 @@
     .medidas {
       margin-left: 20px;
     }
-    .section {
-      margin-bottom: 20px;
-      padding: 10px;
-      border-bottom: 1px solid #333;
+    
+    /* Para que cada checkbox aparezca en una línea */
+    .checkbox-item {
+      margin-bottom: 5px;
     }
+    
     input[type="number"],
     textarea {
       padding: 5px;
       margin: 5px 0;
-      width: 100%;
-      box-sizing: border-box;
       background-color: #333;
       color: #e0e0e0;
       border: 1px solid #555;
+      box-sizing: border-box;
     }
+    
     /* Cambiar fondo y color del textarea de indicaciones */
     #indicacionesText {
       background-color: #FFFFC6;
       color: black;
+      /* Fuente inicial en 10pt */
+      font-size: 10pt; 
+      width: 100%;
+      box-sizing: border-box;
+      resize: none;
+      margin-top: 10px;
     }
-    /* Centrar los botones */
+    
+    /* Centrar botones en general */
+    .button-center {
+      text-align: center;
+    }
+    
+    /* Botones */
     button {
       padding: 5px 10px;
-      margin-top: 10px;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
+      margin: 5px;
       cursor: pointer;
       background-color: #333;
       color: #e0e0e0;
@@ -73,16 +104,7 @@
     button:hover {
       background-color: #444;
     }
-    textarea {
-      resize: none;
-    }
-    .checkbox-group label,
-    .soluciones label,
-    .medicamentos label,
-    .medidas label {
-      display: block;
-      margin-bottom: 5px;
-    }
+    
     /* Opciones predeterminadas para líquidos y mEq */
     .liquidos-options, .mEq-options {
       margin-top: 5px;
@@ -92,9 +114,11 @@
       display: block;
       margin-bottom: 3px;
     }
+    
     .hidden {
       display: none;
     }
+    
     /* Medicamentos: Dividir en dos columnas */
     .med-checkboxes {
       display: flex;
@@ -107,42 +131,65 @@
     .med-checkboxes .checkbox-item {
       margin-bottom: 5px;
     }
+    
+    /* Para alinear la etiqueta y el input de peso en la misma línea */
+    .peso-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap; /* por si se reduce mucho la ventana */
+    }
   </style>
 </head>
 <body>
+
+  <!-- Contenedor de datos (Peso, dieta, soluciones, medicamentos, medidas) -->
   <div class="container">
-    <h1></h1>
-    <h2>INDICACIONES MÉDICAS POSTQUIRÚRGICAS</h2>
+    <h2>Indicaciones Postquirúrgicas Apendicectomía</h2>
     <p class="doctor-name">Dr. Eder David Martínez Castrejón</p>
     
-    <!-- Sección principal -->
     <div class="section">
-      <label for="peso">Peso del paciente (kg):</label>
-      <input type="number" id="peso" placeholder="Ingrese el peso en kg">
+      <!-- Peso en la misma línea -->
+      <div class="peso-container">
+        <label for="peso">Peso del paciente (kg):</label>
+        <input type="number" id="peso" placeholder="Ingrese el peso en kg" style="max-width:200px;">
+      </div>
       
       <!-- Sección 1: Dieta (sólo se permite seleccionar uno) -->
       <div class="checkbox-group">
         <p><strong>1. Dieta</strong></p>
-        <label>
-          <input type="checkbox" id="dieta_ayuno" name="dieta" value="Ayuno" checked>
-          Ayuno
-        </label>
-        <label>
-          <input type="checkbox" id="dieta_ayuno_sonda" name="dieta" value="Ayuno + sonda nasogástrica a derivación">
-          Ayuno + sonda nasogástrica a derivación
-        </label>
-        <label>
-          <input type="checkbox" id="dieta_liquida" name="dieta" value="Dieta líquida">
-          Dieta líquida
-        </label>
-        <label>
-          <input type="checkbox" id="dieta_liquida_progresar" name="dieta" value="Dieta líquida y progresar">
-          Dieta líquida y progresar
-        </label>
-        <label>
-          <input type="checkbox" id="dieta_blanda" name="dieta" value="Dieta blanda">
-          Dieta blanda
-        </label>
+        
+        <!-- Cada checkbox en su propio div para un salto de línea claro -->
+        <div class="checkbox-item">
+          <label>
+            <input type="checkbox" id="dieta_ayuno" name="dieta" value="Ayuno" checked>
+            Ayuno
+          </label>
+        </div>
+        <div class="checkbox-item">
+          <label>
+            <input type="checkbox" id="dieta_ayuno_sonda" name="dieta" value="Ayuno + sonda nasogástrica a derivación">
+            Ayuno + sonda nasogástrica a derivación
+          </label>
+        </div>
+        <div class="checkbox-item">
+          <label>
+            <input type="checkbox" id="dieta_liquida" name="dieta" value="Dieta líquida">
+            Dieta líquida
+          </label>
+        </div>
+        <div class="checkbox-item">
+          <label>
+            <input type="checkbox" id="dieta_liquida_progresar" name="dieta" value="Dieta líquida y progresar">
+            Dieta líquida y progresar
+          </label>
+        </div>
+        <div class="checkbox-item">
+          <label>
+            <input type="checkbox" id="dieta_blanda" name="dieta" value="Dieta blanda">
+            Dieta blanda
+          </label>
+        </div>
       </div>
       
       <!-- Sección 2: Soluciones -->
@@ -150,6 +197,7 @@
         <p><strong>2. Soluciones</strong></p>
         <label>Líquidos totales</label>
         <!-- Opciones para líquidos totales -->
+        
         <!-- Grupo para pacientes con peso ≤ 10 kg -->
         <div id="liquidos_menor" class="liquidos-options hidden">
           <label>
@@ -167,9 +215,11 @@
           <label>
             <input type="checkbox" name="liquidos_default" value="otro">
             Otro
+            <!-- Input en la misma línea -->
+            <input type="number" id="liquidos_otro_menor" placeholder="Ingrese otro valor" disabled style="max-width:150px; margin-left:10px;">
           </label>
-          <input type="number" id="liquidos_otro_menor" placeholder="Ingrese otro valor" disabled>
         </div>
+        
         <!-- Grupo para pacientes con peso > 10 kg -->
         <div id="liquidos_mayor" class="liquidos-options hidden">
           <label>
@@ -187,8 +237,9 @@
           <label>
             <input type="checkbox" name="liquidos_default" value="otro">
             Otro
+            <!-- Input en la misma línea -->
+            <input type="number" id="liquidos_otro_mayor" placeholder="Ingrese otro valor" disabled style="max-width:150px; margin-left:10px;">
           </label>
-          <input type="number" id="liquidos_otro_mayor" placeholder="Ingrese otro valor" disabled>
         </div>
         
         <!-- Opciones para mEq Cloruro de potasio -->
@@ -210,9 +261,11 @@
           <label>
             <input type="checkbox" name="mEq_default" value="otro">
             Otro
+            <!-- Input en la misma línea -->
+            <input type="number" id="mEq_otro_menor" placeholder="Ingrese otro valor" disabled style="max-width:150px; margin-left:10px;">
           </label>
-          <input type="number" id="mEq_otro_menor" placeholder="Ingrese otro valor" disabled>
         </div>
+        
         <!-- Grupo para pacientes con peso > 10 kg -->
         <div id="mEq_options_mayor" class="mEq-options hidden">
           <label>
@@ -230,8 +283,9 @@
           <label>
             <input type="checkbox" name="mEq_default" value="otro">
             Otro
+            <!-- Input en la misma línea -->
+            <input type="number" id="mEq_otro_mayor" placeholder="Ingrese otro valor" disabled style="max-width:150px; margin-left:10px;">
           </label>
-          <input type="number" id="mEq_otro_mayor" placeholder="Ingrese otro valor" disabled>
         </div>
       </div>
       
@@ -243,7 +297,7 @@
           <div class="column">
             <div class="checkbox-item">
               <label>
-                <input type="checkbox" id="med_omeprazol" name="medicamento" value="Omeprazol" checked>
+                <input type="checkbox" id="med_omeprazol" name="medicamento" value="Omeprazol">
                 Omeprazol
               </label>
             </div>
@@ -266,10 +320,12 @@
               </label>
             </div>
             <div class="checkbox-item">
-              <label>
+              <label style="display: inline-block; margin-bottom: 0;">
                 <input type="checkbox" id="med_ceftriaxona" name="medicamento" value="Ceftriaxona">
                 Ceftriaxona
               </label>
+              <!-- Campo para Infectólogo que autoriza, inicialmente oculto y deshabilitado -->
+              <input type="text" id="autorizaCeftriaxona" placeholder="Infectólogo que autoriza" disabled class="hidden" style="margin-left:10px; max-width:150px;">
             </div>
             <div class="checkbox-item">
               <label>
@@ -290,6 +346,7 @@
               </label>
             </div>
           </div>
+          
           <!-- Columna 2: Medicamentos SUSPENDER -->
           <div class="column">
             <div class="checkbox-item">
@@ -323,23 +380,54 @@
       <!-- Sección 4: Medidas generales -->
       <div class="medidas">
         <p><strong>4. Medidas generales</strong></p>
-        <label>
-          <input type="checkbox" id="medidas_penrose" name="medida" value="Cuidados de penrose">
-          Cuidados de penrose
-        </label>
-        <label>
-          <input type="checkbox" id="medidas_cvc" name="medida" value="Cuidados de catéter venoso central">
-          Cuidados de catéter venoso central
-        </label>
+        
+        <div class="checkbox-item">
+          <label>
+            <input type="checkbox" id="medidas_penrose" name="medida" value="Cuidados de penrose">
+            Cuidados de penrose
+          </label>
+        </div>
+        <div class="checkbox-item">
+          <label>
+            <input type="checkbox" id="medidas_cvc" name="medida" value="Cuidados de catéter venoso central">
+            Cuidados de catéter venoso central
+          </label>
+        </div>
       </div>
-      
+    </div>
+    
+    <!-- Botones para generar y copiar, centrados -->
+    <div class="button-center">
       <button onclick="generarIndicaciones()">Generar Indicaciones Médicas</button>
-      <textarea id="indicacionesText" rows="30" placeholder="Las indicaciones aparecerán aquí"></textarea>
       <button onclick="copyIndications()">Copiar indicaciones</button>
     </div>
   </div>
   
+  <!-- Contenedor más ancho para mostrar el textarea y cambiar el tamaño de fuente -->
+  <div class="indicaciones-container">
+    <div class="button-center">
+      <button onclick="increaseFontSize()">+</button>
+      <button onclick="decreaseFontSize()">-</button>
+    </div>
+    <textarea id="indicacionesText" rows="30" placeholder="Las indicaciones aparecerán aquí"></textarea>
+  </div>
+  
   <script>
+    // Tamaño de fuente inicial para el textarea
+    var fontSize = 10;
+    
+    // Funciones para aumentar o disminuir el tamaño de fuente
+    function increaseFontSize() {
+      fontSize++;
+      document.getElementById('indicacionesText').style.fontSize = fontSize + "pt";
+    }
+    function decreaseFontSize() {
+      if(fontSize > 1) { // Evita que baje demasiado
+        fontSize--;
+        document.getElementById('indicacionesText').style.fontSize = fontSize + "pt";
+      }
+    }
+
     // Función para redondear al múltiplo de 5 más cercano
     function roundToNearest5(value) {
       return Math.round(value / 5) * 5;
@@ -450,16 +538,59 @@
       });
     });
     
+    // Habilita/deshabilita el campo de "Infectólogo que autoriza" para Ceftriaxona
+    var ceftriaxonaCheckbox = document.getElementById('med_ceftriaxona');
+    var autorizaCeftriaxonaInput = document.getElementById('autorizaCeftriaxona');
+    ceftriaxonaCheckbox.addEventListener('change', function(){
+      if(this.checked){
+        autorizaCeftriaxonaInput.disabled = false;
+        autorizaCeftriaxonaInput.classList.remove('hidden');
+      } else {
+        autorizaCeftriaxonaInput.disabled = true;
+        autorizaCeftriaxonaInput.classList.add('hidden');
+        autorizaCeftriaxonaInput.value = "";
+      }
+    });
+    
     // Función para generar las indicaciones
     function generarIndicaciones() {
+      // 1) Validación de peso
       var peso = parseFloat(document.getElementById('peso').value);
       if(isNaN(peso) || peso <= 0){
         document.getElementById('indicacionesText').value = "Por favor, ingrese un peso válido.";
         return;
       }
       
-      var sc = (peso * 4 + 7) / (peso + 90);
+      // 2) Validar que se haya seleccionado algo en líquidos totales
+      var radiosLiquidos = document.getElementsByName("liquidos_default");
+      var seleccionadoLiquidos = "";
+      for(var i = 0; i < radiosLiquidos.length; i++){
+        if(radiosLiquidos[i].checked){
+          seleccionadoLiquidos = radiosLiquidos[i].value;
+          break;
+        }
+      }
+      if(!seleccionadoLiquidos){
+        document.getElementById('indicacionesText').value = "Por favor, seleccione un valor válido en líquidos totales.";
+        return;
+      }
       
+      // 3) Validar Cloruro de potasio
+      var radiosMEq = document.getElementsByName("mEq_default");
+      var seleccionadoMEq = "";
+      for(var i = 0; i < radiosMEq.length; i++){
+        if(radiosMEq[i].checked){
+          seleccionadoMEq = radiosMEq[i].value;
+          break;
+        }
+      }
+      if(!seleccionadoMEq){
+        document.getElementById('indicacionesText').value = "Por favor, seleccione un valor válido para Cloruro de potasio.";
+        return;
+      }
+      
+      // 4) Si hasta aquí todo bien, calculamos normal
+      var sc = (peso * 4 + 7) / (peso + 90);
       var hoy = new Date();
       var dd = hoy.getDate();
       if(dd < 10) dd = '0' + dd;
@@ -483,34 +614,27 @@
       // Sección 2: Soluciones - Líquidos totales
       var liquidos;
       if(peso <= 10){
-        var radios = document.getElementsByName("liquidos_default");
-        var seleccionado = "";
-        for(var i = 0; i < radios.length; i++){
-          if(radios[i].checked){
-            seleccionado = radios[i].value;
-            break;
-          }
-        }
-        if(seleccionado === "otro"){
+        if(seleccionadoLiquidos === "otro"){
           liquidos = parseFloat(document.getElementById("liquidos_otro_menor").value);
+          if(isNaN(liquidos) || liquidos<=0){
+            document.getElementById('indicacionesText').value = "Por favor, ingrese un valor numérico válido en 'Otro' (Líquidos totales).";
+            return;
+          }
         } else {
-          liquidos = parseFloat(seleccionado);
+          liquidos = parseFloat(seleccionadoLiquidos);
         }
       } else {
-        var radios = document.getElementsByName("liquidos_default");
-        var seleccionado = "";
-        for(var i = 0; i < radios.length; i++){
-          if(radios[i].checked){
-            seleccionado = radios[i].value;
-            break;
-          }
-        }
-        if(seleccionado === "otro"){
+        if(seleccionadoLiquidos === "otro"){
           liquidos = parseFloat(document.getElementById("liquidos_otro_mayor").value);
+          if(isNaN(liquidos) || liquidos<=0){
+            document.getElementById('indicacionesText').value = "Por favor, ingrese un valor numérico válido en 'Otro' (Líquidos totales).";
+            return;
+          }
         } else {
-          liquidos = parseFloat(seleccionado);
+          liquidos = parseFloat(seleccionadoLiquidos);
         }
       }
+      
       var unidad = (peso <= 10) ? "mlkgdía" : "mlm2scdía";
       indicaciones += "2. Soluciones calculadas a " + liquidos + " " + unidad + " para rol de 8 horas";
       
@@ -522,6 +646,7 @@
         var baseValue = (peso <= 10) ? peso : parseFloat(sc.toFixed(2));
         var rawVol = (baseValue * liquidos) / 3;
         var rounded = Math.round(rawVol);
+        // Ajuste para volverlo par
         if(rounded % 2 !== 0){
           var lower = rounded - 1;
           var upper = rounded + 1;
@@ -543,30 +668,22 @@
       // Sección 2: Soluciones - mEq Cloruro de potasio
       var mEqValue;
       if(peso <= 10){
-        var radiosMEq = document.getElementsByName("mEq_default");
-        var seleccionadoMEq = "";
-        for(var i = 0; i < radiosMEq.length; i++){
-          if(radiosMEq[i].checked){
-            seleccionadoMEq = radiosMEq[i].value;
-            break;
-          }
-        }
         if(seleccionadoMEq === "otro"){
           mEqValue = parseFloat(document.getElementById("mEq_otro_menor").value);
+          if(isNaN(mEqValue) || mEqValue<=0){
+            document.getElementById('indicacionesText').value = "Por favor, ingrese un valor numérico válido en 'Otro' (Cloruro de potasio).";
+            return;
+          }
         } else {
           mEqValue = parseFloat(seleccionadoMEq);
         }
       } else {
-        var radiosMEq = document.getElementsByName("mEq_default");
-        var seleccionadoMEq = "";
-        for(var i = 0; i < radiosMEq.length; i++){
-          if(radiosMEq[i].checked){
-            seleccionadoMEq = radiosMEq[i].value;
-            break;
-          }
-        }
         if(seleccionadoMEq === "otro"){
           mEqValue = parseFloat(document.getElementById("mEq_otro_mayor").value);
+          if(isNaN(mEqValue) || mEqValue<=0){
+            document.getElementById('indicacionesText').value = "Por favor, ingrese un valor numérico válido en 'Otro' (Cloruro de potasio).";
+            return;
+          }
         } else {
           mEqValue = parseFloat(seleccionadoMEq);
         }
@@ -582,9 +699,17 @@
       }
       var unitForMEq = (peso <= 10) ? "mEqkgdía" : "mEqm2scdía";
       
-      // Primero, agregar líneas de solución glucosada y salina
-      var solGlucosada = (vol === "X") ? "X" : vol / 2;
-      var solSalina = solGlucosada;
+      // Sección para soluciones dextrosa y salina (redondeo a múltiplos de 5)
+      var solGlucosada, solSalina;
+      if(vol === "X"){
+        solGlucosada = "X";
+        solSalina = "X";
+      } else {
+        // La mitad del volumen total (vol/2) y redondeado a múltiplo de 5
+        solGlucosada = roundToNearest5(vol / 2);
+        solSalina = solGlucosada;
+      }
+      
       indicaciones += "\n\n-Solución glucosada al 5%............... " + solGlucosada + " ml";
       indicaciones += "\n-Solución salina al 0.9%................ " + solSalina + " ml";
       // Luego, agregar la línea de KCl
@@ -618,7 +743,8 @@
             var params = medDosages[medName];
             if(params) {
               var xValue;
-              if(medName === "Ampicilina" || medName === "Amikacina" || medName === "Metronidazol" || medName === "Ceftriaxona" || medName === "Paracetamol" || medName === "Metamizol") {
+              // Redondea a múltiplos de 5 para algunos
+              if(["Ampicilina","Amikacina","Metronidazol","Ceftriaxona","Paracetamol","Metamizol"].includes(medName)) {
                 xValue = roundToNearest5(peso * params.dosage / params.divisor);
               } else {
                 xValue = Math.round(peso * params.dosage / params.divisor);
@@ -641,7 +767,16 @@
                   alternado = " alternado con Ketorolaco";
                 }
               }
-              indicaciones += "\n-" + medName + " (" + params.dosage + " mgkgdía) " + xValue + " " + params.frequencyText + alternado;
+              // Agregar "Administrar" antes de la dosis
+              indicaciones += "\n-" + medName + " (" + params.dosage + " mgkgdía) Administrar " + xValue + " " + params.frequencyText + alternado;
+              
+              // Si es Ceftriaxona, revisa si se llenó el infectólogo que autoriza
+              if(medName === "Ceftriaxona"){
+                var autoriza = document.getElementById('autorizaCeftriaxona').value.trim();
+                if(autoriza !== ""){
+                  indicaciones += " (Autoriza " + autoriza + ")";
+                }
+              }
             }
           }
         });
