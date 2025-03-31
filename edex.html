@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página con Tema Oscuro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            width: 100%;
+        }
+        
+        .main-container {
+            display: flex;
+            flex-grow: 1;
+        }
+        
+        .menu-column {
+            width: 200px;
+            padding: 20px;
+            background-color: #1a1a1a;
+        }
+        
+        .menu-section {
+            position: relative;
+            margin-bottom: 10px;
+        }
+        
+        .menu-title {
+            color: #00d1d1;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 12px 15px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            background-color: #252525;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .menu-title:hover {
+            background-color: #006666;
+        }
+        
+        .menu-title::after {
+            content: '';
+            position: absolute;
+            left: 100%;
+            top: 0;
+            width: 20px;
+            height: 100%;
+        }
+        
+        .dropdown-content {
+            display: block;
+            opacity: 0;
+            visibility: hidden;
+            position: absolute;
+            left: 100%;
+            top: 0;
+            background-color: #1e1e1e;
+            min-width: 300px;
+            border-radius: 8px;
+            padding: 10px 0;
+            z-index: 1;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            margin-left: 10px;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .menu-section:hover .dropdown-content,
+        .dropdown-content:hover {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transition-delay: 0.1s;
+        }
+        
+        .nav-link {
+            color: #00d1d1;
+            text-decoration: none;
+            padding: 10px 20px;
+            display: block;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+        
+        .nav-link:hover {
+            background-color: #006666;
+            color: #ffffff;
+        }
+        
+        /* Estilos para submenús */
+        .has-submenu {
+            cursor: pointer;
+            position: relative;
+            display: block;
+            padding: 10px 20px;
+            color: #00d1d1;
+            transition: background-color 0.3s;
+        }
+        
+        .has-submenu:hover {
+            background-color: #006666;
+            color: #ffffff;
+        }
+        
+        .has-submenu::after {
+            content: '›';
+            position: absolute;
+            right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .submenu {
+            display: block;
+            opacity: 0;
+            visibility: hidden;
+            position: absolute;
+            left: 100%;
+            top: -10px;
+            background-color: #252525;
+            min-width: 200px;
+            border-radius: 0 8px 8px 8px;
+            padding: 10px 0;
+            z-index: 3;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .has-submenu:hover .submenu,
+        .submenu:hover {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transition-delay: 0.1s;
+        }
+
+        .has-submenu::before {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: 0;
+            width: 20px;
+            height: 100%;
+            z-index: 2;
+        }
+        
+        h1 {
+            color: #00d1d1;
+            margin: 0;
+            padding: 20px 0;
+        }
+        
+        .content-area {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        
+        /* Estilos para el buscador */
+        .search-container {
+            margin-bottom: 20px;
+            max-width: 600px;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            border: 1px solid #00d1d1;
+            border-radius: 4px;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 8px rgba(0, 209, 209, 0.6);
+        }
+        
+        .search-results {
+            margin-top: 20px;
+            border-radius: 4px;
+            overflow: hidden;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .search-result-item {
+            padding: 12px 15px;
+            background-color: #1e1e1e;
+            border-bottom: 1px solid #2a2a2a;
+            transition: background-color 0.3s;
+        }
+        
+        .search-result-item:hover {
+            background-color: #006666;
+        }
+        
+        .search-result-link {
+            color: #00d1d1;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .search-result-link:hover {
+            color: #ffffff;
+        }
+        
+        .search-result-category {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 3px;
+        }
+        
+        .search-result-category .separator {
+            margin: 0 5px;
+            color: #00d1d1;
+        }
+        
+        .no-results {
+            padding: 15px;
+            color: #888;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .menu-column {
+                width: 100%;
+                padding: 10px;
+            }
+            
+            .dropdown-content {
+                position: static;
+                width: 100%;
+                margin-left: 0;
+                margin-top: 10px;
+                opacity: 1;
+                visibility: visible;
+                display: none;
+            }
+            
+            .menu-section:hover .dropdown-content {
+                display: block;
+            }
+            
+            .menu-title::after {
+                display: none;
+            }
+            
+            .submenu {
+                position: static;
+                display: none;
+                margin-left: 20px;
+                box-shadow: none;
+                border-radius: 0;
+                background-color: #2a2a2a;
+            }
+            
+            .has-submenu:hover .submenu {
+                display: block;
+            }
+            
+            .search-container {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Cirugía Pediátrica Dr. Eder Martínez</h1>
+    </div>
+    
+    <div class="main-container">
+        <div class="menu-column">
+            <!-- Primer menú -->
+            <div class="menu-section">
+                <div class="menu-title">Herramientas</div>
+                <div class="dropdown-content">
+                    <a href="https://eddamaca.github.io/Proyectos_finales/Indicaciones_postquirurgicas.html" class="nav-link">Generador de indicaciones postquirúrgicas</a>
+                    <a href="https://google.com.mx" class="nav-link">-- Vacío 2 --</a>
+                    <a href="https://google.com.mx" class="nav-link">-- Vacío 3 --</a>
+                    <a href="https://google.com.mx" class="nav-link">-- Vacío 4 --</a>
+                    <a href="https://google.com.mx" class="nav-link">-- Vacío 5 --</a>
+                </div>
+            </div>
+            
+            <!-- Segundo menú -->
+            <div class="menu-section">
+                <div class="menu-title">Bibliografías</div>
+                <div class="dropdown-content">
+                    <a href="https://drive.google.com/drive/folders/13J4LU8-nVRwyy3puyERR6uQfa_-Iuo7o?usp=sharing" class="nav-link">Revistas EMC (Todos Google Drive)</a>
+                    <a href="https://youtube.com.mx" class="nav-link">Ashcraft. Cirugía pediátrica (7 ed)</a>
+                    
+                    <!-- Enlaces 13-15 con submenús -->
+                    <span class="has-submenu">-- Vacío 3 --
+                        <div class="submenu">
+                            <a href="https://facebook.com" class="nav-link">-- Vacío 3.1 --</a>
+                            <a href="https://facebook.com" class="nav-link">-- Vacío 3.2 --</a>
+                            <a href="https://facebook.com" class="nav-link">-- Vacío 3.3 --</a>
+                        </div>
+                    </span>
+                    
+                    <span class="has-submenu">-- Vacío 4 --
+                        <div class="submenu">
+                            <a href="https://facebook.com" class="nav-link">-- Vacío 4.1 --</a>
+                            <a href="https://facebook.com" class="nav-link">-- Vacío 4.2 --</a>
+                            <a href="https://facebook.com" class="nav-link">-- Vacío 4.3 --</a>
+                        </div>
+                    </span>
+
+                    <a href="https://youtube.com.mx" class="nav-link">-- Vacío 5 --</a>
+
+                </div>
+            </div>
+            
+            <!-- Tercer menú -->
+            <div class="menu-section">
+                <div class="menu-title">Notas</div>
+                <div class="dropdown-content">
+                    <a href="https://eddamaca.github.io/notas_postquirurgicas/visor_txt.html" class="nav-link">Ejemplo de notas postquirúrgicas</a>
+                    <a href="https://bing.com" class="nav-link">-- Vacío 2 --</a>
+                    <a href="https://bing.com" class="nav-link">-- Vacío 3 --</a>
+                    <a href="https://bing.com" class="nav-link">-- Vacío 4 --</a>
+                    <a href="https://bing.com" class="nav-link">-- Vacío 5 --</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-area">
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-box" placeholder="Buscar en los menús..." autocomplete="off">
+                <div id="searchResults" class="search-results"></div>
+            </div>
+            <p>Selecciona una opción del menú o utiliza el buscador para encontrar contenido.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            
+            // Función para normalizar texto (eliminar tildes y convertir a minúsculas)
+            function normalizeText(text) {
+                return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+            }
+            
+            // Función para recolectar todos los enlaces de los menús (excepto títulos principales)
+            function collectAllLinks() {
+                const links = [];
+                
+                // Seleccionar todos los enlaces de los menús principales y submenús
+                const menuLinks = document.querySelectorAll('.dropdown-content a.nav-link, .submenu a.nav-link');
+                
+                menuLinks.forEach(link => {
+                    // Obtener la categoría (nombre del menú principal)
+                    let category = '';
+                    let subcategory = '';
+                    const menuSection = link.closest('.menu-section');
+                    
+                    if (menuSection) {
+                        const menuTitle = menuSection.querySelector('.menu-title');
+                        if (menuTitle) {
+                            category = menuTitle.textContent;
+                        }
+                        
+                        // Verificar si está en un submenú
+                        const submenu = link.closest('.submenu');
+                        if (submenu) {
+                            const submenuParent = submenu.parentElement;
+                            if (submenuParent.classList.contains('has-submenu')) {
+                                // Solo tomar el texto del submenú sin los enlaces internos
+                                subcategory = submenuParent.textContent.trim().split('\n')[0];
+                            }
+                        }
+                    }
+                    
+                    // Obtener el texto del enlace y la URL
+                    const text = link.textContent.trim();
+                    const href = link.href;
+                    
+                    // Agregar a la lista de enlaces
+                    if (text && href) {
+                        links.push({
+                            text: text,
+                            normalizedText: normalizeText(text),
+                            href: href,
+                            category: category || 'Menú principal',
+                            subcategory: subcategory,
+                            normalizedSubcategory: normalizeText(subcategory)
+                        });
+                    }
+                });
+                
+                return links;
+            }
+            
+            // Recolectar todos los enlaces al cargar la página
+            const allLinks = collectAllLinks();
+            
+            // Función para buscar coincidencias (ignorando títulos de menús principales)
+            function searchLinks(query) {
+                if (!query || query.trim() === '') {
+                    return [];
+                }
+                
+                const normalizedQuery = normalizeText(query.trim());
+                return allLinks.filter(link => {
+                    return link.normalizedText.includes(normalizedQuery) || 
+                           (link.subcategory && link.normalizedSubcategory.includes(normalizedQuery));
+                });
+            }
+            
+            // Función para mostrar los resultados de búsqueda
+            function displayResults(results) {
+                searchResults.innerHTML = '';
+                
+                if (results.length === 0) {
+                    if (searchInput.value.trim() !== '') {
+                        searchResults.innerHTML = '<div class="no-results">No se encontraron resultados</div>';
+                    }
+                    return;
+                }
+                
+                // Mostrar resultados
+                results.forEach(item => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'search-result-item';
+                    
+                    const link = document.createElement('a');
+                    link.className = 'search-result-link';
+                    link.href = item.href;
+                    link.textContent = item.text;
+                    
+                    const category = document.createElement('div');
+                    category.className = 'search-result-category';
+                    
+                    // Construir la jerarquía del menú
+                    if (item.subcategory) {
+                        category.innerHTML = `${item.category} <span class="separator">›</span> ${item.subcategory}`;
+                    } else {
+                        category.textContent = item.category;
+                    }
+                    
+                    resultItem.appendChild(link);
+                    resultItem.appendChild(category);
+                    searchResults.appendChild(resultItem);
+                });
+            }
+            
+            // Evento para manejar la entrada de búsqueda
+            searchInput.addEventListener('input', function() {
+                const query = this.value;
+                const results = searchLinks(query);
+                displayResults(results);
+            });
+            
+            // Evitar que el clic en los resultados cierre el panel
+            searchResults.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            
+            // Cerrar resultados al hacer clic fuera
+            document.addEventListener('click', function() {
+                searchResults.innerHTML = '';
+            });
+        });
+    </script>
+</body>
+</html>
