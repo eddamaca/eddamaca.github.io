@@ -28,10 +28,13 @@ Agregar descripción de la tecnica.
 [*Orquidopexia*]
 Agregar descripción de la tecnica.
 
+[*Orquiectomía + orquidopexia transescrotal contralateral*]
+Agregar descripción de la tecnica.
+
 [*Hernioplastia inguinal*]
 Agregar descripción de la tecnica.
 
-[*Apendicectomía umbilical*]
+[*Hernioplastia umbilical*]
 Agregar descripción de la tecnica.
 
 [*Circuncisión*]
