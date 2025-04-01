@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Notas Postquirúrgicas</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --sidebar-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --hover-color: #333;
+            --border-color: #444;
+            --button-bg: #4CAF50;
+            --button-hover: #45a049;
+            --primary-color: #bb86fc;
+            --highlight-color: #ffeb3b;
+            --highlight-dark: #ffc107;
+            --font-size: 14px;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: var(--font-size);
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        label {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        input[type="text"], textarea {
+            background-color: var(--sidebar-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+        }
+        
+        #noteContent {
+            min-height: 200px;
+            resize: vertical;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 8px 15px;
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--button-hover);
+        }
+        
+        #highlightBtn {
+            background-color: var(--highlight-dark);
+            color: #000;
+        }
+        
+        #highlightBtn:hover {
+            background-color: #ffa000;
+        }
+        
+        #copyBtn {
+            background-color: #2196F3;
+        }
+        
+        #copyBtn:hover {
+            background-color: #0b7dda;
+        }
+        
+        .font-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: auto;
+        }
+        
+        .font-btn {
+            padding: 5px 10px;
+            background-color: var(--border-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .font-btn:hover {
+            background-color: var(--hover-color);
+        }
+        
+        #outputText {
+            background-color: var(--sidebar-bg);
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            border: 1px solid var(--border-color);
+            min-height: 100px;
+        }
+        
+        #editableContent {
+            min-height: 200px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px;
+            background-color: var(--sidebar-bg);
+            color: var(--text-color);
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+        
+        .highlight {
+            background-color: var(--highlight-color);
+            color: black;
+            padding: 0 2px;
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .highlight:hover {
+            background-color: var(--highlight-dark);
+        }
+        
+        #floatingRemoveBtn {
+            position: absolute;
+            display: none;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            z-index: 100;
+            font-size: 12px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: var(--sidebar-bg);
+            padding: 20px;
+            border-radius: 4px;
+            width: 80%;
+            max-width: 600px;
+        }
+        
+        #importText {
+            width: 100%;
+            min-height: 200px;
+            margin-bottom: 15px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generador de Notas Postquirúrgicas</h1>
+        
+        <div class="input-group">
+            <label for="noteTitle">Título de la Nota (sin corchetes):</label>
+            <input type="text" id="noteTitle" placeholder="Ej: Nota 1">
+        </div>
+        
+        <div class="input-group">
+            <label>Contenido de la Nota:</label>
+            <div id="editableContent" contenteditable="true" placeholder="Escribe el contenido de la nota aquí..."></div>
+        </div>
+        
+        <div class="button-group">
+            <button id="highlightBtn" onclick="highlightSelection()">🔍 Resaltar Texto Seleccionado</button>
+            <button id="importBtn" onclick="openImportModal()">📥 Importar Texto</button>
+            <button id="generateBtn" onclick="generateNote()">✨ Generar Nota</button>
+            
+            <div class="font-control">
+                <button class="font-btn" onclick="changeFontSize(-1)">-</button>
+                <span id="font-size-display">14px</span>
+                <button class="font-btn" onclick="changeFontSize(1)">+</button>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label for="outputText">Texto formateado para notas_postquirurgicas.txt:</label>
+            <div class="button-group">
+                <button id="copyBtn" onclick="copyToClipboard()">📋 Copiar al Portapapeles</button>
+            </div>
+            <textarea id="outputText" readonly></textarea>
+        </div>
+    </div>
+
+    <button id="floatingRemoveBtn" onclick="removeHighlight()">Quitar resaltado</button>
+
+    <!-- Modal para importar texto -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <h3>Importar Texto Formateado</h3>
+            <textarea id="importText" placeholder="Pega aquí el texto con formato. Ejemplo:&#10;[Nota 1]&#10;Esta es la [h]primera[/h] nota postquirúrgica."></textarea>
+            <div class="modal-buttons">
+                <button onclick="closeImportModal()">Cancelar</button>
+                <button onclick="importFormattedText()">Importar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFontSize = 14;
+        let currentHighlight = null;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const editableContent = document.getElementById('editableContent');
+            const floatingBtn = document.getElementById('floatingRemoveBtn');
+            
+            // Manejar clics en el contenido editable
+            editableContent.addEventListener('click', function(e) {
+                if (e.target.classList.contains('highlight')) {
+                    currentHighlight = e.target;
+                    positionRemoveButton(e.target);
+                    floatingBtn.style.display = 'block';
+                } else {
+                    floatingBtn.style.display = 'none';
+                    currentHighlight = null;
+                }
+            });
+            
+            // Ocultar botón flotante al presionar Esc
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    floatingBtn.style.display = 'none';
+                    document.getElementById('importModal').style.display = 'none';
+                }
+            });
+            
+            // Ocultar botón al hacer clic fuera
+            document.addEventListener('click', function(e) {
+                if (e.target !== floatingBtn && !e.target.classList.contains('highlight')) {
+                    floatingBtn.style.display = 'none';
+                }
+            });
+            
+            changeFontSize(0);
+        });
+        
+        function positionRemoveButton(highlightElement) {
+            const rect = highlightElement.getBoundingClientRect();
+            const floatingBtn = document.getElementById('floatingRemoveBtn');
+            floatingBtn.style.top = `${rect.top - 30}px`;
+            floatingBtn.style.left = `${rect.left}px`;
+        }
+        
+        function removeHighlight() {
+            if (currentHighlight) {
+                const textNode = document.createTextNode(currentHighlight.textContent);
+                currentHighlight.parentNode.replaceChild(textNode, currentHighlight);
+                document.getElementById('floatingRemoveBtn').style.display = 'none';
+                currentHighlight = null;
+            }
+        }
+        
+        function highlightSelection() {
+            const selection = window.getSelection();
+            if (selection.isCollapsed) {
+                alert('Por favor selecciona texto para resaltar');
+                return;
+            }
+            
+            const range = selection.getRangeAt(0);
+            const selectedText = range.toString();
+            
+            if (!selectedText.trim()) {
+                alert('Por favor selecciona texto válido para resaltar');
+                return;
+            }
+            
+            // Crear elemento highlight
+            const highlight = document.createElement('span');
+            highlight.className = 'highlight';
+            highlight.textContent = selectedText;
+            
+            // Reemplazar el texto seleccionado con el highlight
+            range.deleteContents();
+            range.insertNode(highlight);
+            
+            // Limpiar selección
+            selection.removeAllRanges();
+        }
+        
+        function generateNote() {
+            const title = document.getElementById('noteTitle').value.trim();
+            const editableContent = document.getElementById('editableContent');
+            
+            if (!title) {
+                alert('Por favor ingresa un título para la nota');
+                return;
+            }
+            
+            if (!editableContent.textContent.trim()) {
+                alert('Por favor ingresa contenido para la nota');
+                return;
+            }
+            
+            // Clonar el contenido para procesarlo
+            const clone = editableContent.cloneNode(true);
+            
+            // Reemplazar elementos highlight con [h]texto[/h]
+            const highlights = clone.querySelectorAll('.highlight');
+            highlights.forEach(highlight => {
+                const textNode = document.createTextNode(`[h]${highlight.textContent}[/h]`);
+                highlight.parentNode.replaceChild(textNode, highlight);
+            });
+            
+            // Obtener el contenido final
+            const content = clone.innerHTML
+                .replace(/<div>/g, '\n')
+                .replace(/<\/div>/g, '')
+                .replace(/<br>/g, '\n');
+            
+            const output = `[${title}]\n${content}`;
+            document.getElementById('outputText').value = output;
+        }
+        
+        function copyToClipboard() {
+            const outputText = document.getElementById('outputText');
+            
+            if (!outputText.value) {
+                alert('No hay texto para copiar. Genera una nota primero.');
+                return;
+            }
+            
+            outputText.select();
+            document.execCommand('copy');
+            
+            // Mostrar feedback visual
+            const copyBtn = document.getElementById('copyBtn');
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = '✓ Copiado!';
+            copyBtn.style.backgroundColor = '#4CAF50';
+            
+            setTimeout(() => {
+                copyBtn.textContent = originalText;
+                copyBtn.style.backgroundColor = '#2196F3';
+            }, 2000);
+        }
+        
+        function changeFontSize(change) {
+            currentFontSize += change;
+            
+            // Limitar tamaño
+            if (currentFontSize < 12) currentFontSize = 12;
+            if (currentFontSize > 24) currentFontSize = 24;
+            
+            document.documentElement.style.setProperty('--font-size', currentFontSize + 'px');
+            document.getElementById('font-size-display').textContent = currentFontSize + 'px';
+            
+            // Aplicar tamaño de fuente
+            document.getElementById('editableContent').style.fontSize = currentFontSize + 'px';
+            document.getElementById('outputText').style.fontSize = currentFontSize + 'px';
+        }
+        
+        function openImportModal() {
+            document.getElementById('importModal').style.display = 'flex';
+            document.getElementById('importText').focus();
+        }
+        
+        function closeImportModal() {
+            document.getElementById('importModal').style.display = 'none';
+        }
+        
+        function importFormattedText() {
+            const importText = document.getElementById('importText').value.trim();
+            if (!importText) {
+                alert('Por favor ingresa texto para importar');
+                return;
+            }
+            
+            // Extraer el título
+            const titleMatch = importText.match(/^\[([^\]]+)\]/);
+            if (!titleMatch) {
+                alert('Formato incorrecto. Debe comenzar con [Título]');
+                return;
+            }
+            
+            const title = titleMatch[1];
+            let content = importText.substring(titleMatch[0].length).trim();
+            
+            // Extraer contenido y resaltados
+            const editableContent = document.getElementById('editableContent');
+            editableContent.innerHTML = '';
+            
+            // Procesar el contenido con resaltados
+            let lastIndex = 0;
+            let htmlContent = '';
+            
+            while (true) {
+                const highlightStart = content.indexOf('[h]', lastIndex);
+                if (highlightStart === -1) {
+                    htmlContent += escapeHtml(content.substring(lastIndex));
+                    break;
+                }
+                
+                const highlightEnd = content.indexOf('[/h]', highlightStart);
+                if (highlightEnd === -1) {
+                    htmlContent += escapeHtml(content.substring(lastIndex));
+                    break;
+                }
+                
+                // Texto antes del resaltado
+                htmlContent += escapeHtml(content.substring(lastIndex, highlightStart));
+                
+                // Texto resaltado
+                const highlightedText = content.substring(highlightStart + 3, highlightEnd);
+                htmlContent += `<span class="highlight">${escapeHtml(highlightedText)}</span>`;
+                
+                lastIndex = highlightEnd + 4;
+            }
+            
+            // Convertir saltos de línea a elementos HTML
+            htmlContent = htmlContent.replace(/\n/g, '<br>');
+            
+            // Actualizar la interfaz
+            document.getElementById('noteTitle').value = title;
+            editableContent.innerHTML = htmlContent;
+            
+            // Cerrar el modal
+            closeImportModal();
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
