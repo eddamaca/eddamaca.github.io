@@ -1,26 +1,38 @@
-[*Nota 1*]
-Esta es la primera nota postquirúrgica.
+[*PROCEDIMIENTOS*]
+Seleccione un procedimiento quirúrgico para ver su descripción.
 
-Paciente: Juan Pérez
-Procedimiento: [b]Apendicectomía[/b]
-Fecha: 15/06/2023
+[*Apendicectomía abierta*]
+Agregar descripción de la tecnica.
 
-Observaciones:
-- Buen estado postoperatorio
-- [h]Controlar signos vitales[/h] cada 4 horas
-- [color=red]Vigilar sangrado[/color]
-
-[*Nota 2*]
-Esta es la segunda nota.
-
-Paciente: María González
-Procedimiento: [i]Colecistectomía laparoscópica[/i]
-Fecha: 20/06/2023
-
-[u]Indicaciones:[/u]
-1. Dieta blanda
-2. Reposo relativo
-3. [h]Control de herida quirúrgica[/h]
+[*Apendicectomía laparoscópica*]
+Agregar descripción de la tecnica.
 
 [*Gastrostomía laparoscópica con técnica de punto en U*]
 Previa firma de consentimiento informado, bajo anestesia general balanceada, intubación orotraqueal, posición decúbito dorsal, antisepsia de región abdominal, coloca campos estériles, incisión con bisturí en cicatriz umbilical, disección por planos con electrobisturí, mediante técnica de Hasson introduce trócar de [h]12 mm[/h], inicia neumoperitoneo, presión de [h]10mmHg[/h], Flujo de [h]4L/min[/h], se identifica cámara gástrica, incisión en hipocondrio izquierdo con bisturí introduce babckok laparoscópica, identifica cámara gástrica, pinza y tracciona a nivel de cara anterior sobre curvatura mayor, coloca puntos percutáneos totales en "U" de manera lateral y medial con sutura [h]vicryl 2-0[/h], se realiza punción con aguja a traves de incision en piel sobre cámara gástrica, introduce guía metálica, mediante técnica de seldinger dilata cámara gástrica de manera gradual con [h]dilatadores desde 6 Fr hasta 16 Fr[/h], se procede a introducir atraves de guia metalica [h]sonda foley calibre 16 Fr[/h] a cámara gástrica, se insufla [h]globo con 5 cc[/h] de ABD, se tracciona riendas de sutura en "U" y anuda de manera externa sin isquemisar piel, verifica adecuado paso de solución por sonda, ausencia de fugas así como adecuado retorno gástrico por la misma. Se verifica hemostasia, retira lente de laparocopia, afronta herida umbilical aponeurosis con [h]punto en "X" vicryl 2-0[/h], afronta piel de herida con puntos [h]simples invertidos sutura gliconato 3-0[/h], se limpia herida y cubre con parche de gasa, da por terminado procedimiento. Egresa paciente a sala de recuéración bajo efecto residual anestésico, se informa a familiar.
+
+[*LAPE + desinvaginación intestinal por taxis*]
+Agregar descripción de la tecnica.
+
+[*Colocación de cateter venoso central subclavio*]
+Agregar descripción de la tecnica.
+
+[*Colocación de cateter puerto*]
+Agregar descripción de la tecnica.
+
+[*Retiro de cateter puerto*]
+Agregar descripción de la tecnica.
+
+[*Colocación de sello pleural*]
+Agregar descripción de la tecnica.
+
+[*Orquidopexia*]
+Agregar descripción de la tecnica.
+
+[*Hernioplastia inguinal*]
+Agregar descripción de la tecnica.
+
+[*Apendicectomía umbilical*]
+Agregar descripción de la tecnica.
+
+[*Circuncisión*]
+Agregar descripción de la tecnica.
