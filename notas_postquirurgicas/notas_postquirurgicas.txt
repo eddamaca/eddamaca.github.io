@@ -1,0 +1,29 @@
+[*Nota 1*]
+Esta es la primera nota postquirúrgica.
+
+Paciente: Juan Pérez
+Procedimiento: [b]Apendicectomía[/b]
+Fecha: 15/06/2023
+
+Observaciones:
+- Buen estado postoperatorio
+- [h]Controlar signos vitales[/h] cada 4 horas
+- [color=red]Vigilar sangrado[/color]
+
+[*Nota 2*]
+Esta es la segunda nota.
+
+Paciente: María González
+Procedimiento: [i]Colecistectomía laparoscópica[/i]
+Fecha: 20/06/2023
+
+[u]Indicaciones:[/u]
+1. Dieta blanda
+2. Reposo relativo
+3. [h]Control de herida quirúrgica[/h]
+
+[*Gastrostomía laparoscópica punto U*]
+
+Gastrostomía laparoscópica con técnica de punto en U
+
+Previa firma de consentimiento informado, bajo anestesia general balanceada, intubación orotraqueal, posición decúbito dorsal, antisepsia de región abdominal, coloca campos estériles, incisión con bisturí en cicatriz umbilical, disección por planos con electrobisturí, mediante técnica de Hasson introduce trócar de 12 mm, inicia neumoperitoneo, presión de 10mmHg, Flujo de 4L/min, se identifica cámara gástrica, incisión en hipocondrio izquierdo con bisturí introduce babckok laparoscópica, identifica cámara gástrica, pinza y tracciona a nivel de cara anterior sobre curvatura mayor, coloca puntos percutáneos totales en "U" de manera lateral y medial con sutura vicryl 2-0, se realiza punción con aguja a traves de incision en piel sobre cámara gástrica, introduce guía metálica, mediante técnica de seldinger dilata cámara gástrica de manera gradual con dilatadores desde 6 fr hasta 16Fr, se procede a introducir atraves de guia metalica sonda foley calibre 16 Fr a cámara gástrica, se insufla globo con 5 cc de ABD, se tracciona riendas de sutura en "U" y anuda de manera externa sin isquemisar piel, verifica adecuado paso de solución por sonda, ausencia de fugas así como adecuado retorno gástrico por la misma. Se verifica hemostasia, retira lente de laparocopia, afronta herida umbilical aponeurosis con punto en "X" vicryl 2-0, afronta piel de herida con puntos simples invertidos sutura gliconato 3-0, se limpia herida y cubre con parche de gasa, da por terminado procedimiento. Egresa paciente a sala de recuéración bajo efecto residual anestésico, se informa a familiar.
