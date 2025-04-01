@@ -1,0 +1,35 @@
+[Nota 1]
+Esta es la primera nota postquirúrgica.
+
+Paciente: Juan Pérez
+Procedimiento: [b]Apendicectomía[/b]
+Fecha: 15/06/2023
+
+Observaciones:
+- Buen estado postoperatorio
+- [h]Controlar signos vitales[/h] cada 4 horas
+- [color=red]Vigilar sangrado[/color]
+
+[Nota 2]
+Esta es la segunda nota.
+
+Paciente: María González
+Procedimiento: [i]Colecistectomía laparoscópica[/i]
+Fecha: 20/06/2023
+
+[u]Indicaciones:[/u]
+1. Dieta blanda
+2. Reposo relativo
+3. [h]Control de herida quirúrgica[/h]
+
+[Nota 3]
+Nota de seguimiento.
+
+Paciente: Carlos López
+Procedimiento: Herniorrafia inguinal
+Fecha: 25/06/2023
+
+Evolución:
+- [color=green]Buena cicatrización[/color]
+- Sin complicaciones
+- Retirar puntos en 10 días

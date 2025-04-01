@@ -1,0 +1,11 @@
+Sistema de marcas especiales:
+
+[u]texto[/u] - Subrayado
+
+[b]texto[/b] - Negrita
+
+[i]texto[/i] - Cursiva
+
+[h]texto[/h] - Resaltado (highlight)
+
+[color=red]texto[/color] - Color de texto

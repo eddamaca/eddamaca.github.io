@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lector de Notas Postquirúrgicas</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --sidebar-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --hover-color: #333;
+            --border-color: #444;
+            --button-bg: #4CAF50;
+            --button-hover: #45a049;
+            --primary-color: #bb86fc;
+            --font-size: 14px;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: var(--font-size);
+        }
+        
+        #sidebar {
+            width: 200px;
+            background-color: var(--sidebar-bg);
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+            overflow-y: auto;
+        }
+        
+        #sidebar h2 {
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--primary-color);
+        }
+        
+        .menu-item {
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .menu-item:hover {
+            background-color: var(--hover-color);
+        }
+        
+        #content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #text-display {
+            display: none;
+        }
+        
+        #html-display {
+            width: 100%;
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: monospace;
+            overflow-y: scroll;
+            background-color: var(--sidebar-bg);
+            color: var(--text-color);
+            margin-bottom: 10px;
+            white-space: pre-wrap;
+            font-size: var(--font-size);
+        }
+        
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .font-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .font-button {
+            padding: 5px 10px;
+            background-color: var(--border-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .font-button:hover {
+            background-color: var(--hover-color);
+        }
+        
+        #copy-button {
+            padding: 8px 15px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        
+        #copy-button:hover {
+            background-color: #555;
+        }
+        
+        /* Estilos para el texto resaltado */
+        u {
+            text-decoration: underline;
+        }
+        
+        .highlight {
+            background-color: yellow;
+            color: black;
+        }
+        
+        .bold {
+            font-weight: bold;
+        }
+        
+        .italic {
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <h2>Notas Postquirúrgicas</h2>
+        <div id="notes-menu"></div>
+    </div>
+    
+    <div id="content">
+        <textarea id="text-display"></textarea>
+        <div id="html-display">Selecciona una nota del menú lateral</div>
+        
+        <div class="button-container">
+            <div class="font-control">
+                <button class="font-button" onclick="changeFontSize(-1)">-</button>
+                <span id="font-size-display">14px</span>
+                <button class="font-button" onclick="changeFontSize(1)">+</button>
+            </div>
+        </div>
+        
+        <button id="copy-button" onclick="copyToClipboard()">Copiar al portapapeles</button>
+    </div>
+
+    <script>
+        let currentNote = null;
+        let originalContent = '';
+        let currentFontSize = 14;
+        let notesData = {};
+
+        // Cargar el archivo al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadNotesFile('notas_postquirurgicas.txt');
+        });
+
+        async function loadNotesFile(filename) {
+            try {
+                const response = await fetch(filename);
+                if (!response.ok) {
+                    throw new Error('Archivo no encontrado');
+                }
+                const text = await response.text();
+                processNotesFile(text);
+            } catch (error) {
+                const errorMsg = `Error al cargar el archivo: ${error.message}\n\nAsegúrate de que:\n1. Estás ejecutando esto en un servidor local\n2. El archivo ${filename} existe en el mismo directorio`;
+                document.getElementById('html-display').textContent = errorMsg;
+            }
+        }
+
+        function processNotesFile(text) {
+            // Limpiar datos anteriores
+            notesData = {};
+            document.getElementById('notes-menu').innerHTML = '';
+            
+            // Dividir el texto en notas usando los marcadores [Nota X]
+            const noteRegex = /\[Nota (\d+)\]([\s\S]*?)(?=\[Nota \d+\]|$)/g;
+            let match;
+            
+            while ((match = noteRegex.exec(text)) !== null) {
+                const noteId = match[1];
+                const noteContent = match[2].trim();
+                notesData[noteId] = noteContent;
+                
+                // Crear botón en el sidebar
+                const menuItem = document.createElement('div');
+                menuItem.className = 'menu-item';
+                menuItem.textContent = `Nota ${noteId}`;
+                menuItem.onclick = function() { showNote(noteId); };
+                document.getElementById('notes-menu').appendChild(menuItem);
+            }
+            
+            // Mostrar la primera nota si existe
+            if (Object.keys(notesData).length > 0) {
+                showNote(Object.keys(notesData)[0]);
+            }
+        }
+
+        function showNote(noteId) {
+            if (!notesData[noteId]) return;
+            
+            let content = notesData[noteId];
+            
+            // Procesar marcas especiales
+            content = content.replace(/\[u\](.*?)\[\/u\]/g, '<u>$1</u>');
+            content = content.replace(/\[b\](.*?)\[\/b\]/g, '<strong>$1</strong>');
+            content = content.replace(/\[i\](.*?)\[\/i\]/g, '<em>$1</em>');
+            content = content.replace(/\[h\](.*?)\[\/h\]/g, '<span class="highlight">$1</span>');
+            content = content.replace(/\[color=(.*?)\](.*?)\[\/color\]/g, '<span style="color:$1">$2</span>');
+            
+            document.getElementById('html-display').innerHTML = content;
+            document.getElementById('text-display').value = content.replace(/<[^>]*>/g, '');
+            currentNote = noteId;
+            originalContent = content;
+        }
+
+        function copyToClipboard() {
+            const textToCopy = document.getElementById('text-display').value;
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => alert('Texto copiado al portapapeles'))
+                .catch(err => {
+                    // Fallback para navegadores antiguos
+                    const textarea = document.createElement('textarea');
+                    textarea.value = textToCopy;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    alert('Texto copiado al portapapeles');
+                });
+        }
+        
+        function changeFontSize(change) {
+            currentFontSize += change;
+            
+            // Limitar el tamaño mínimo y máximo
+            if (currentFontSize < 8) currentFontSize = 8;
+            if (currentFontSize > 36) currentFontSize = 36;
+            
+            document.documentElement.style.setProperty('--font-size', currentFontSize + 'px');
+            document.getElementById('font-size-display').textContent = currentFontSize + 'px';
+        }
+    </script>
+</body>
+</html>
