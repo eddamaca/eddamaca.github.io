@@ -22,19 +22,8 @@ Fecha: 20/06/2023
 2. Reposo relativo
 3. [h]Control de herida quirúrgica[/h]
 
-[Nota 3]
-Nota de seguimiento.
-
-Paciente: Carlos López
-Procedimiento: Herniorrafia inguinal
-Fecha: 25/06/2023
-
-Evolución:
-- [color=green]Buena cicatrización[/color]
-- Sin complicaciones
-- Retirar puntos en 10 días
-
 [Gastrostomía laparoscópica punto U]
+
 Gastrostomía laparoscópica con técnica de punto en "U"
 
 Previa firma de consentimiento informado, bajo anestesia general balanceada, intubación orotraqueal, posición decúbito dorsal, antisepsia de región abdominal, coloca campos estériles, incisión con bisturí en cicatriz umbilical, disección por planos con electrobisturí, mediante técnica de Hasson introduce trócar de [h]12 mm[/h], inicia neumoperitoneo, presión de [h]10mmHg[/h], Flujo de [h]4L/min[/h], se identifica cámara gástrica, incisión en [h]hipocondrio izquierdo[/h] con bisturí introduce babckok laparoscópica, identifica cámara gástrica, pinza y tracciona a nivel de cara anterior sobre curvatura mayor, coloca puntos percutáneos totales en "U" de manera lateral y medial con sutura [h]vicryl 2-0[/h], se realiza punción con aguja a traves de incision en piel sobre cámara gástrica, introduce guía metálica, mediante técnica de seldinger dilata cámara gástrica de manera gradual con dilatadores desde [h]6 fr hasta 16Fr[/h], se procede a introducir atraves de guia metalica sonda foley calibre [h]16 Fr[/h] a cámara gástrica, se insufla globo con [h]5 cc[/h] de ABD, se tracciona riendas de sutura en "U" y anuda de manera externa sin isquemisar piel, verifica adecuado paso de solución por sonda, ausencia de fugas así como adecuado retorno gástrico por la misma. Se verifica hemostasia, retira lente de laparocopia, afronta herida umbilical aponeurosis con punto en "X" [h]vicryl 2-0[/h], afronta piel de herida con puntos simples invertidos sutura [h]gliconato 3-0[/h], se limpia herida y cubre con parche de gasa, da por terminado procedimiento. Egresa paciente a sala de recuéración bajo efecto residual anestésico, se informa a familiar.
