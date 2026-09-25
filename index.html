@@ -1,836 +1,1849 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Indicaciones Médicas</title>
-  <style>
-    /* Tema oscuro */
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #e0e0e0;
-      margin: 20px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión Postquirúrgica</title>
+    <style>
+        /* ESTILOS GLOBALES Y PARA LAS PESTAÑAS */
+        :root {
+            --bg-color: #121212;
+            --sidebar-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --hover-color: #333;
+            --border-color: #444;
+            --primary-color: #bb86fc;
+        }
 
-    /* Quitar las flechas de inputs type=number */
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-    input[type=number] {
-      -moz-appearance: textfield; /* Para Firefox */
-    }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
 
-    /* Contenedor de datos */
-    .container {
-      max-width: 600px;
-      margin: 20px auto;
-      background: #1e1e1e;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0px 0px 10px rgba(0,0,0,0.7);
-    }
-    
-    /* Contenedor más ancho para indicaciones */
-    .indicaciones-container {
-      max-width: 900px;
-      margin: 20px auto;
-      background-color: #1e1e1e;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0px 0px 10px rgba(0,0,0,0.7);
-    }
-    
-    h1, h2 {
-      text-align: center;
-      color: #ffffff;
-      margin: 5px 0;
-    }
-    
-    /* Nuevo estilo para el nombre del doctor */
-    .doctor-name {
-      text-align: center;
-      font-weight: bold;
-      color: #ffffff;
-      margin: 5px 0 20px 0;
-    }
-    
-    .section {
-      margin-bottom: 20px;
-      padding: 10px;
-      border-bottom: 1px solid #333;
-    }
-    
-    /* Alineación uniforme de cada apartado */
-    .checkbox-group, 
-    .soluciones, 
-    .medicamentos, 
-    .medidas {
-      margin-left: 20px;
-    }
-    
-    /* Para que cada checkbox aparezca en una línea */
-    .checkbox-item {
-      margin-bottom: 5px;
-    }
-    
-    input[type="number"],
-    textarea {
-      padding: 5px;
-      margin: 5px 0;
-      background-color: #333;
-      color: #e0e0e0;
-      border: 1px solid #555;
-      box-sizing: border-box;
-    }
-    
-    /* Cambiar fondo y color del textarea de indicaciones */
-    #indicacionesText {
-      background-color: #FFFFC6;
-      color: black;
-      /* Fuente inicial en 10pt */
-      font-size: 10pt; 
-      width: 100%;
-      box-sizing: border-box;
-      resize: none;
-      margin-top: 10px;
-    }
-    
-    /* Centrar botones en general */
-    .button-center {
-      text-align: center;
-    }
-    
-    /* Botones */
-    button {
-      padding: 5px 10px;
-      margin: 5px;
-      cursor: pointer;
-      background-color: #333;
-      color: #e0e0e0;
-      border: 1px solid #555;
-    }
-    button:hover {
-      background-color: #444;
-    }
-    
-    /* Opciones predeterminadas para líquidos y mEq */
-    .liquidos-options, .mEq-options {
-      margin-top: 5px;
-      padding-left: 20px;
-    }
-    .liquidos-options label, .mEq-options label {
-      display: block;
-      margin-bottom: 3px;
-    }
-    
-    .hidden {
-      display: none;
-    }
-    
-    /* Medicamentos: Dividir en dos columnas */
-    .med-checkboxes {
-      display: flex;
-      gap: 10px;
-    }
-    .med-checkboxes .column {
-      width: 50%;
-      box-sizing: border-box;
-    }
-    .med-checkboxes .checkbox-item {
-      margin-bottom: 5px;
-    }
-    
-    /* Para alinear la etiqueta y el input de peso en la misma línea */
-    .peso-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap; /* por si se reduce mucho la ventana */
-    }
-  </style>
+        /* Contenedor de las pestañas */
+        .tab-container {
+            overflow: hidden;
+            background-color: #1e1e1e;
+            border-bottom: 1px solid #444;
+        }
+
+        .tab-container button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+            color: #e0e0e0;
+        }
+
+        .tab-container button:hover {
+            background-color: #333;
+        }
+
+        .tab-container button.active {
+            background-color: #bb86fc;
+            color: #121212;
+        }
+
+        /* Contenido de cada pestaña */
+        .tab-content {
+            display: none;
+            padding: 20px;
+            animation: fadeEffect 0.5s;
+        }
+
+        @keyframes fadeEffect {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* --------------- ESTILOS PESTAÑA 1: GENERAR INDICACIONES --------------- */
+        #tabIndicaciones {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        
+        #tabIndicaciones input[type=number]::-webkit-inner-spin-button,
+        #tabIndicaciones input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        #tabIndicaciones input[type=number] { -moz-appearance: textfield; }
+
+        #tabIndicaciones .container {
+            max-width: 600px; margin: 20px auto; background: #1e1e1e; padding: 20px;
+            border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.7);
+        }
+        
+        #tabIndicaciones .indicaciones-container {
+            max-width: 900px; margin: 20px auto; background-color: #1e1e1e; padding: 20px;
+            border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.7);
+        }
+        
+        #tabIndicaciones h1, #tabIndicaciones h2 { text-align: center; color: #ffffff; margin: 5px 0; }
+        #tabIndicaciones .doctor-name { text-align: center; font-weight: bold; color: #ffffff; margin: 5px 0 20px 0; }
+        #tabIndicaciones .section { margin-bottom: 20px; padding: 10px; border-bottom: 1px solid #333; }
+        #tabIndicaciones .checkbox-group, #tabIndicaciones .soluciones, #tabIndicaciones .medicamentos, #tabIndicaciones .medidas { margin-left: 20px; }
+        #tabIndicaciones .checkbox-item { margin-bottom: 5px; }
+        
+        #tabIndicaciones input[type="number"], #tabIndicaciones textarea {
+            padding: 5px; margin: 5px 0; background-color: #333; color: #e0e0e0;
+            border: 1px solid #555; box-sizing: border-box;
+        }
+        
+        #tabIndicaciones #indicacionesText {
+            background-color: #FFFFC6; color: black; font-size: 10pt; width: 100%;
+            box-sizing: border-box; resize: none; margin-top: 10px;
+        }
+        
+        #tabIndicaciones .button-center { text-align: center; }
+        
+        #tabIndicaciones button {
+            padding: 5px 10px; margin: 5px; cursor: pointer; background-color: #333;
+            color: #e0e0e0; border: 1px solid #555;
+        }
+        #tabIndicaciones button:hover { background-color: #444; }
+        
+        #tabIndicaciones .liquidos-options, #tabIndicaciones .mEq-options { margin-top: 5px; padding-left: 20px; }
+        #tabIndicaciones .liquidos-options label, #tabIndicaciones .mEq-options label { display: block; margin-bottom: 3px; }
+        #tabIndicaciones .hidden { display: none; }
+        #tabIndicaciones .med-checkboxes { display: flex; gap: 10px; }
+        #tabIndicaciones .med-checkboxes .column { width: 50%; box-sizing: border-box; }
+        #tabIndicaciones .med-checkboxes .checkbox-item { margin-bottom: 5px; }
+        #tabIndicaciones .peso-container { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        /* --------------- ESTILOS PESTAÑA 2: GENERAR NOTAS --------------- */
+        #tabGenNotas { font-size: 14px; }
+        #tabGenNotas .container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        #tabGenNotas h1 { color: var(--primary-color); text-align: center; margin-bottom: 10px; }
+        #tabGenNotas .input-group { display: flex; flex-direction: column; gap: 8px; }
+        #tabGenNotas label { font-weight: bold; color: var(--primary-color); }
+        
+        #tabGenNotas input[type="text"], #tabGenNotas textarea {
+            background-color: var(--sidebar-bg); color: var(--text-color); border: 1px solid var(--border-color);
+            border-radius: 4px; padding: 10px; font-family: monospace;
+        }
+        
+        #tabGenNotas #gen_noteContent { min-height: 200px; resize: vertical; white-space: pre-wrap; line-height: 1.5; }
+        #tabGenNotas .button-group { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        
+        #tabGenNotas button {
+            padding: 8px 15px; background-color: #4CAF50; color: white; border: none;
+            border-radius: 4px; cursor: pointer; transition: background-color 0.3s;
+        }
+        #tabGenNotas button:hover { background-color: #45a049; }
+        #tabGenNotas #gen_highlightBtn { background-color: #ffc107; color: #000; }
+        #tabGenNotas #gen_highlightBtn:hover { background-color: #ffa000; }
+        #tabGenNotas #gen_copyBtn { background-color: #2196F3; }
+        #tabGenNotas #gen_copyBtn:hover { background-color: #0b7dda; }
+        
+        #tabGenNotas .font-control { display: flex; align-items: center; gap: 5px; margin-left: auto; }
+        #tabGenNotas .font-btn {
+            padding: 5px 10px; background-color: var(--border-color); color: white;
+            border: none; border-radius: 4px; cursor: pointer; font-weight: bold;
+        }
+        #tabGenNotas .font-btn:hover { background-color: var(--hover-color); }
+        
+        #tabGenNotas #gen_outputText {
+            background-color: var(--sidebar-bg); padding: 15px; border-radius: 4px;
+            font-family: monospace; white-space: pre-wrap; border: 1px solid var(--border-color);
+            min-height: 100px;
+        }
+        
+        #tabGenNotas #gen_editableContent {
+            min-height: 200px; border: 1px solid var(--border-color); border-radius: 4px;
+            padding: 10px; background-color: var(--sidebar-bg); color: var(--text-color);
+            white-space: pre-wrap; line-height: 1.5;
+        }
+        
+        #tabGenNotas .highlight { background-color: #ffeb3b; color: black; padding: 0 2px; border-radius: 2px; cursor: pointer; position: relative; }
+        #tabGenNotas .highlight:hover { background-color: #ffc107; }
+        #tabGenNotas #gen_floatingRemoveBtn {
+            position: absolute; display: none; background-color: #f44336; color: white;
+            border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; z-index: 100; font-size: 12px;
+        }
+        
+        #tabGenNotas .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;
+        }
+        
+        #tabGenNotas .modal-content { background-color: var(--sidebar-bg); padding: 20px; border-radius: 4px; width: 80%; max-width: 600px; }
+        #tabGenNotas #gen_importText { width: 100%; min-height: 200px; margin-bottom: 15px; }
+        #tabGenNotas .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; }
+
+        /* --------------- ESTILOS PESTAÑA 3: VER NOTAS --------------- */
+        #tabVerNotas { display: flex; height: calc(100vh - 80px); padding: 0; font-size: 14px; overflow: hidden; }
+        #tabVerNotas #ver_sidebar {
+            width: 250px; background-color: var(--sidebar-bg); padding: 15px; box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+            display: flex; flex-direction: column; height: 100%; box-sizing: border-box;
+        }
+        
+        #tabVerNotas #ver_sidebar h2 {
+            margin-top: 0; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);
+            color: var(--primary-color); margin-bottom: 15px; flex-shrink: 0;
+        }
+        
+        #tabVerNotas #ver_search-container { margin-bottom: 15px; flex-shrink: 0; }
+        #tabVerNotas #ver_note-search {
+            width: 90%; padding: 8px 10px; border-radius: 4px; border: 1px solid var(--border-color);
+            background-color: var(--bg-color); color: var(--text-color); font-size: 14px;
+        }
+        
+        #tabVerNotas #ver_notes-menu-container { flex-grow: 1; overflow-y: auto; padding-right: 5px; min-height: 0; }
+        #tabVerNotas #ver_notes-menu-container::-webkit-scrollbar { width: 8px; }
+        #tabVerNotas #ver_notes-menu-container::-webkit-scrollbar-track { background: var(--sidebar-bg); }
+        #tabVerNotas #ver_notes-menu-container::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+        #tabVerNotas #ver_notes-menu-container::-webkit-scrollbar-thumb:hover { background: #666; }
+        
+        #tabVerNotas .menu-item {
+            padding: 10px; margin: 5px 0; cursor: pointer; border-radius: 4px; transition: all 0.3s;
+        }
+        #tabVerNotas .menu-item:hover { background-color: var(--hover-color); }
+        #tabVerNotas .menu-item.selected { background-color: #00bcd4; color: #000; font-weight: bold; }
+        
+        #tabVerNotas #ver_content {
+            flex: 1; padding: 20px; display: flex; flex-direction: column;
+            height: 100%; box-sizing: border-box; overflow: hidden;
+        }
+        
+        #tabVerNotas #ver_text-display { display: none; }
+        #tabVerNotas #ver_note-display-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+        
+        #tabVerNotas #ver_html-display, #tabVerNotas #ver_editable-display, 
+        #tabVerNotas #ver_complications-display, #tabVerNotas #ver_editable-complications {
+            width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px;
+            font-family: monospace; overflow-y: auto; background-color: var(--sidebar-bg); color: var(--text-color);
+            margin-bottom: 10px; white-space: pre-wrap; font-size: 14px; box-sizing: border-box;
+        }
+        #tabVerNotas #ver_html-display, #tabVerNotas #ver_editable-display {
+             min-height: 250px; flex-grow: 1;
+        }
+        #tabVerNotas #ver_complications-display, #tabVerNotas #ver_editable-complications {
+            min-height: 80px; flex-shrink: 0;
+        }
+        #tabVerNotas #ver_editable-display, #tabVerNotas #ver_editable-complications { 
+            display: none; 
+        }
+        #tabVerNotas #ver_complications-container h3 {
+             margin: 0 0 5px 0; color: var(--primary-color);
+        }
+
+        .button-container { display: flex; gap: 10px; margin-bottom: 10px; flex-shrink: 0; }
+        .font-control { display: flex; align-items: center; gap: 5px; }
+        .font-button {
+            padding: 5px 10px; background-color: var(--border-color); color: white;
+            border: none; border-radius: 4px; cursor: pointer; font-weight: bold;
+        }
+        .font-button:hover { background-color: var(--hover-color); }
+        
+        #ver_copy-button {
+            padding: 8px 15px; background-color: #333; color: white; border: none;
+            border-radius: 4px; cursor: pointer; transition: background-color 0.3s; width: 100%; flex-shrink: 0;
+        }
+        #ver_copy-button:hover { background-color: #555; }
+        
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7); z-index: 100; justify-content: center; align-items: center;
+        }
+        
+        .modal-content {
+            background-color: var(--sidebar-bg); padding: 20px; border-radius: 5px;
+            width: 300px; text-align: center;
+        }
+        .modal-buttons { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
+        .modal-button { padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; }
+        .modal-confirm { background-color: #f44336; color: white; }
+        .modal-cancel { background-color: var(--border-color); color: white; }
+        
+        #tabVerNotas u { text-decoration: underline; }
+        #tabVerNotas .highlight { background-color: yellow; color: black; cursor: pointer; }
+        #tabVerNotas .highlight.editing { background-color: #ffeb3b; outline: 2px solid white; }
+        #tabVerNotas .bold { font-weight: bold; }
+        #tabVerNotas .italic { font-style: italic; }
+        
+        .edit-buttons { display: none; gap: 10px; margin-bottom: 10px; flex-shrink: 0; }
+        #ver_save-button { padding: 8px 15px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        #ver_save-button:hover { background-color: #45a049; }
+        #ver_cancel-edit-button { padding: 8px 15px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        #ver_cancel-edit-button:hover { background-color: #d32f2f; }
+        
+        #ver_highlight-edit-container {
+            display: none; position: absolute; background-color: var(--sidebar-bg); border: 1px solid var(--border-color);
+            border-radius: 4px; padding: 5px; z-index: 101; box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        #ver_highlight-edit-input {
+            background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color);
+            border-radius: 4px; padding: 5px; width: 200px;
+        }
+
+        /* --------------- ESTILOS PESTAÑA 4: CALCULADORA Y NOTAS --------------- */
+        #tabCalculadora {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            gap: 20px;
+            font-size: 62.5%;
+            box-sizing: border-box;
+        }
+
+        #tabCalculadora *, #tabCalculadora *::before, #tabCalculadora *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: inherit;
+        }
+
+        #tabCalculadora .main-content-left {
+            display: flex;
+            flex-grow: 1;
+            gap: 20px;
+            flex-direction: column;
+            max-width: 70%;
+            min-width: 600px;
+            height: fit-content;
+        }
+
+        #tabCalculadora .main-content-left h2 {
+            color: #eee;
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            text-align: center;
+            background-color: #2e3032;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        #tabCalculadora .left-and-middle-columns-wrapper {
+            display: flex;
+            gap: 20px;
+            flex-grow: 1;
+            height: fit-content;
+        }
+
+        #tabCalculadora .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start;
+            flex-shrink: 0;
+            width: 200px;
+            padding: 15px;
+            background-color: #2e3032;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            height: fit-content;
+        }
+
+        #tabCalculadora .title-button {
+            background-color: #3f4246;
+            color: #eee;
+            font-size: 1.0rem;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            border: none;
+        }
+
+        #tabCalculadora .title-button:hover {
+            background-color: #55595f;
+            transform: translateY(-1px);
+        }
+
+        #tabCalculadora .title-button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4) inset;
+        }
+
+        #tabCalculadora .middle-column {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 15px;
+            background-color: #2e3032;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            min-width: 350px;
+            height: fit-content;
+        }
+
+        #tabCalculadora .description-text {
+            background-color: #222;
+            color: #eee;
+            font-size: 1.2rem;
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 400px;
+            width: 100%;
+            overflow-y: auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3) inset;
+            border: 1px solid #444;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        #tabCalculadora .calculator {
+            border-radius: 10px;
+            position: relative;
+            width: 320px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            background-color: #2e3032;
+            padding: 15px;
+            flex-shrink: 0;
+            height: fit-content;
+        }
+
+        #tabCalculadora .calculator-screen {
+            width: 100%;
+            font-size: 2.4rem;
+            height: 70px;
+            border: none;
+            background-color: #222;
+            color: #eee;
+            text-align: right;
+            padding-right: 15px;
+            padding-left: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            letter-spacing: 1px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* Animación de destello al presionar igual */
+        #tabCalculadora .calculator-screen.flash {
+            animation: calc-flash 0.4s ease-out;
+        }
+
+        @keyframes calc-flash {
+            0% {
+                background-color: #81c784;
+                color: #000;
+            }
+            50% {
+                background-color: #4caf50;
+                color: #fff;
+            }
+            100% {
+                background-color: #222;
+                color: #eee;
+            }
+        }
+
+        #tabCalculadora .calculator-keys {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+        }
+
+        #tabCalculadora .calculator-keys button {
+            height: 65px;
+            background-color: #3f4246;
+            border: none;
+            border-radius: 8px;
+            font-size: 2.2rem;
+            color: #eee;
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        #tabCalculadora .calculator-keys button:hover {
+            background-color: #55595f;
+            transform: translateY(-1px);
+        }
+
+        #tabCalculadora .calculator-keys button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4) inset;
+        }
+
+        #tabCalculadora .operator {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+
+        #tabCalculadora .operator:hover {
+            background-color: #66BB6A;
+        }
+
+        #tabCalculadora .equal-sign {
+            background-color: #2196F3;
+            color: #fff;
+            grid-column: span 2;
+        }
+
+        #tabCalculadora .equal-sign:hover {
+            background-color: #42A5F5;
+        }
+
+        #tabCalculadora .clear-key {
+            background-color: #f44336;
+            color: #fff;
+            grid-column: span 2;
+        }
+        #tabCalculadora .clear-key:hover {
+            background-color: #ef5350;
+        }
+
+        #tabCalculadora .function-key {
+            background-color: #3f4246;
+            color: #eee;
+        }
+        #tabCalculadora .function-key:hover {
+            background-color: #55595f;
+        }
+
+        #tabCalculadora .zero-button {
+            grid-column: span 1;
+        }
+
+    </style>
 </head>
 <body>
 
-  <!-- Contenedor de datos (Peso, dieta, soluciones, medicamentos, medidas) -->
-  <div class="container">
-    <h2>Indicaciones Postquirúrgicas Apendicectomía</h2>
-    <p class="doctor-name">Dr. Eder David Martínez Castrejón</p>
-    
-    <div class="section">
-      <!-- Peso en la misma línea -->
-      <div class="peso-container">
-        <label for="peso">Peso del paciente (kg):</label>
-        <input type="number" id="peso" placeholder="Ingrese el peso en kg" style="max-width:200px;">
-      </div>
-      
-      <!-- Sección 1: Dieta (sólo se permite seleccionar uno) -->
-      <div class="checkbox-group">
-        <p><strong>1. Dieta</strong></p>
-        
-        <!-- Cada checkbox en su propio div para un salto de línea claro -->
-        <div class="checkbox-item">
-          <label>
-            <input type="checkbox" id="dieta_ayuno" name="dieta" value="Ayuno" checked>
-            Ayuno
-          </label>
-        </div>
-        <div class="checkbox-item">
-          <label>
-            <input type="checkbox" id="dieta_ayuno_sonda" name="dieta" value="Ayuno + sonda nasogástrica a derivación">
-            Ayuno + sonda nasogástrica a derivación
-          </label>
-        </div>
-        <div class="checkbox-item">
-          <label>
-            <input type="checkbox" id="dieta_liquida" name="dieta" value="Dieta líquida">
-            Dieta líquida
-          </label>
-        </div>
-        <div class="checkbox-item">
-          <label>
-            <input type="checkbox" id="dieta_liquida_progresar" name="dieta" value="Dieta líquida y progresar">
-            Dieta líquida y progresar
-          </label>
-        </div>
-        <div class="checkbox-item">
-          <label>
-            <input type="checkbox" id="dieta_blanda" name="dieta" value="Dieta blanda">
-            Dieta blanda
-          </label>
-        </div>
-      </div>
-      
-      <!-- Sección 2: Soluciones -->
-      <div class="soluciones">
-        <p><strong>2. Soluciones</strong></p>
-        <label>Líquidos totales</label>
-        <!-- Opciones para líquidos totales -->
-        
-        <!-- Grupo para pacientes con peso ≤ 10 kg -->
-        <div id="liquidos_menor" class="liquidos-options hidden">
-          <label>
-            <input type="checkbox" name="liquidos_default" value="120">
-            120 mlkgdía
-          </label>
-          <label>
-            <input type="checkbox" name="liquidos_default" value="150">
-            150 mlkgdía
-          </label>
-          <label>
-            <input type="checkbox" name="liquidos_default" value="180">
-            180 mlkgdía
-          </label>
-          <label>
-            <input type="checkbox" name="liquidos_default" value="otro">
-            Otro
-            <!-- Input en la misma línea -->
-            <input type="number" id="liquidos_otro_menor" placeholder="Ingrese otro valor" disabled style="max-width:150px; margin-left:10px;">
-          </label>
-        </div>
-        
-        <!-- Grupo para pacientes con peso > 10 kg -->
-        <div id="liquidos_mayor" class="liquidos-options hidden">
-          <label>
-            <input type="checkbox" name="liquidos_default" value="1200">
-            1200 mlm2scdía
-          </label>
-          <label>
-            <input type="checkbox" name="liquidos_default" value="1500">
-            1500 mlm2scdía
-          </label>
-          <label>
-            <input type="checkbox" name="liquidos_default" value="1800">
-            1800 mlm2scdía
-          </label>
-          <label>
-            <input type="checkbox" name="liquidos_default" value="otro">
-            Otro
-            <!-- Input en la misma línea -->
-            <input type="number" id="liquidos_otro_mayor" placeholder="Ingrese otro valor" disabled style="max-width:150px; margin-left:10px;">
-          </label>
-        </div>
-        
-        <!-- Opciones para mEq Cloruro de potasio -->
-        <label for="mEqCloro">Cloruro de potasio</label>
-        <!-- Grupo para pacientes con peso ≤ 10 kg -->
-        <div id="mEq_options_menor" class="mEq-options hidden">
-          <label>
-            <input type="checkbox" name="mEq_default" value="2">
-            2 mEqkgdía
-          </label>
-          <label>
-            <input type="checkbox" name="mEq_default" value="3">
-            3 mEqkgdía
-          </label>
-          <label>
-            <input type="checkbox" name="mEq_default" value="4">
-            4 mEqkgdía
-          </label>
-          <label>
-            <input type="checkbox" name="mEq_default" value="otro">
-            Otro
-            <!-- Input en la misma línea -->
-            <input type="number" id="mEq_otro_menor" placeholder="Ingrese otro valor" disabled style="max-width:150px; margin-left:10px;">
-          </label>
-        </div>
-        
-        <!-- Grupo para pacientes con peso > 10 kg -->
-        <div id="mEq_options_mayor" class="mEq-options hidden">
-          <label>
-            <input type="checkbox" name="mEq_default" value="20">
-            20 mEqm2scdía
-          </label>
-          <label>
-            <input type="checkbox" name="mEq_default" value="30">
-            30 mEqm2scdía
-          </label>
-          <label>
-            <input type="checkbox" name="mEq_default" value="40">
-            40 mEqm2scdía
-          </label>
-          <label>
-            <input type="checkbox" name="mEq_default" value="otro">
-            Otro
-            <!-- Input en la misma línea -->
-            <input type="number" id="mEq_otro_mayor" placeholder="Ingrese otro valor" disabled style="max-width:150px; margin-left:10px;">
-          </label>
-        </div>
-      </div>
-      
-      <!-- Sección 3: Medicamentos (divididos en dos columnas) -->
-      <div class="medicamentos">
-        <p><strong>3. Medicamentos</strong></p>
-        <div class="med-checkboxes">
-          <!-- Columna 1: Medicamentos regulares -->
-          <div class="column">
-            <div class="checkbox-item">
-              <label>
-                <input type="checkbox" id="med_omeprazol" name="medicamento" value="Omeprazol">
-                Omeprazol
-              </label>
-            </div>
-            <div class="checkbox-item">
-              <label>
-                <input type="checkbox" id="med_ampicilina" name="medicamento" value="Ampicilina">
-                Ampicilina
-              </label>
-            </div>
-            <div class="checkbox-item">
-              <label>
-                <input type="checkbox" id="med_amikacina" name="medicamento" value="Amikacina">
-                Amikacina
-              </label>
-            </div>
-            <div class="checkbox-item">
-              <label>
-                <input type="checkbox" id="med_metronidazol" name="medicamento" value="Metronidazol">
-                Metronidazol
-              </label>
-            </div>
-            <div class="checkbox-item">
-              <label style="display: inline-block; margin-bottom: 0;">
-                <input type="checkbox" id="med_ceftriaxona" name="medicamento" value="Ceftriaxona">
-                Ceftriaxona
-              </label>
-              <!-- Campo para Infectólogo que autoriza, inicialmente oculto y deshabilitado -->
-              <input type="text" id="autorizaCeftriaxona" placeholder="Infectólogo que autoriza" disabled class="hidden" style="margin-left:10px; max-width:150px;">
-            </div>
-            <div class="checkbox-item">
-              <label>
-                <input type="checkbox" id="med_paracetamol" name="medicamento" value="Paracetamol" checked>
-                Paracetamol
-              </label>
-            </div>
-            <div class="checkbox-item">
-              <label>
-                <input type="checkbox" id="med_metamizol" name="medicamento" value="Metamizol" checked>
-                Metamizol
-              </label>
-            </div>
-            <div class="checkbox-item">
-              <label>
-                <input type="checkbox" id="med_ketorolaco" name="medicamento" value="Ketorolaco">
-                Ketorolaco
-              </label>
-            </div>
-          </div>
-          
-          <!-- Columna 2: Medicamentos SUSPENDER -->
-          <div class="column">
-            <div class="checkbox-item">
-              <label>
-                <input type="checkbox" id="med_ampicilina_suspend" name="medicamento" value="Ampicilina SUSPENDER">
-                Ampicilina SUSPENDER
-              </label>
-            </div>
-            <div class="checkbox-item">
-              <label>
-                <input type="checkbox" id="med_amikacina_suspend" name="medicamento" value="Amikacilina SUSPENDER">
-                Amikacilina SUSPENDER
-              </label>
-            </div>
-            <div class="checkbox-item">
-              <label>
-                <input type="checkbox" id="med_metronidazol_suspend" name="medicamento" value="Metronidazol SUSPENDER">
-                Metronidazol SUSPENDER
-              </label>
-            </div>
-            <div class="checkbox-item">
-              <label>
-                <input type="checkbox" id="med_ceftriaxona_suspend" name="medicamento" value="Ceftriaxona SUSPENDER">
-                Ceftriaxona SUSPENDER
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Sección 4: Medidas generales -->
-      <div class="medidas">
-        <p><strong>4. Medidas generales</strong></p>
-        
-        <div class="checkbox-item">
-          <label>
-            <input type="checkbox" id="medidas_penrose" name="medida" value="Cuidados de penrose">
-            Cuidados de penrose
-          </label>
-        </div>
-        <div class="checkbox-item">
-          <label>
-            <input type="checkbox" id="medidas_cvc" name="medida" value="Cuidados de catéter venoso central">
-            Cuidados de catéter venoso central
-          </label>
-        </div>
-      </div>
+    <div class="tab-container">
+        <button class="tab-link" onclick="openTab(event, 'tabIndicaciones')" id="defaultOpen">Indicaciones Apendicectomía</button>
+        <button class="tab-link" onclick="openTab(event, 'tabVerNotas')">Notas Postquirúrgicas</button>
+        <button class="tab-link" onclick="openTab(event, 'tabGenNotas')">Dar formato a notas</button>
+        <button class="tab-link" onclick="openTab(event, 'tabCalculadora')">Calculadora y notas</button>
     </div>
-    
-    <!-- Botones para generar y copiar, centrados -->
-    <div class="button-center">
-      <button onclick="generarIndicaciones()">Generar Indicaciones Médicas</button>
-      <button onclick="copyIndications()">Copiar indicaciones</button>
+
+    <div id="tabIndicaciones" class="tab-content">
+        <div class="container">
+            <h2>Indicaciones Postquirúrgicas Apendicectomía</h2>
+            <p class="doctor-name">Dr. EdDaMaCa</p>
+            
+            <div class="section">
+                <div class="peso-container">
+                    <label for="indic_peso">Peso del paciente (kg):</label>
+                    <input type="number" id="indic_peso" placeholder="Ingrese el peso en kg" style="max-width:200px;">
+                </div>
+                
+                <div class="checkbox-group">
+                    <p><strong>1. Dieta</strong></p>
+                    <div class="checkbox-item"><label><input type="checkbox" name="indic_dieta" value="Ayuno" checked> Ayuno</label></div>
+                    <div class="checkbox-item"><label><input type="checkbox" name="indic_dieta" value="Ayuno + sonda nasogástrica a derivación"> Ayuno + sonda nasogástrica a derivación</label></div>
+                    <div class="checkbox-item"><label><input type="checkbox" name="indic_dieta" value="Dieta líquida"> Dieta líquida</label></div>
+                    <div class="checkbox-item"><label><input type="checkbox" name="indic_dieta" value="Dieta líquida y progresar"> Dieta líquida y progresar</label></div>
+                    <div class="checkbox-item"><label><input type="checkbox" name="indic_dieta" value="Dieta blanda"> Dieta blanda</label></div>
+                </div>
+                
+                <div class="soluciones">
+                    <p><strong>2. Soluciones</strong></p>
+                    <label>Líquidos totales</label>
+                    <div id="indic_liquidos_menor" class="liquidos-options hidden">
+                        <label><input type="checkbox" name="indic_liquidos_default" value="120"> 120 mlkgdía</label>
+                        <label><input type="checkbox" name="indic_liquidos_default" value="150"> 150 mlkgdía</label>
+                        <label><input type="checkbox" name="indic_liquidos_default" value="180"> 180 mlkgdía</label>
+                        <label><input type="checkbox" name="indic_liquidos_default" value="otro"> Otro <input type="number" id="indic_liquidos_otro_menor" placeholder="Ingrese otro valor" disabled style="max-width:150px; margin-left:10px;"></label>
+                    </div>
+                    <div id="indic_liquidos_mayor" class="liquidos-options hidden">
+                        <label><input type="checkbox" name="indic_liquidos_default" value="1200"> 1200 mlm2scdía</label>
+                        <label><input type="checkbox" name="indic_liquidos_default" value="1500"> 1500 mlm2scdía</label>
+                        <label><input type="checkbox" name="indic_liquidos_default" value="1800"> 1800 mlm2scdía</label>
+                        <label><input type="checkbox" name="indic_liquidos_default" value="otro"> Otro <input type="number" id="indic_liquidos_otro_mayor" placeholder="Ingrese otro valor" disabled style="max-width:150px; margin-left:10px;"></label>
+                    </div>
+                    <label for="mEqCloro">Cloruro de potasio</label>
+                    <div id="indic_mEq_options_menor" class="mEq-options hidden">
+                        <label><input type="checkbox" name="indic_mEq_default" value="2"> 2 mEqkgdía</label>
+                        <label><input type="checkbox" name="indic_mEq_default" value="3"> 3 mEqkgdía</label>
+                        <label><input type="checkbox" name="indic_mEq_default" value="4"> 4 mEqkgdía</label>
+                        <label><input type="checkbox" name="indic_mEq_default" value="otro"> Otro <input type="number" id="indic_mEq_otro_menor" placeholder="Ingrese otro valor" disabled style="max-width:150px; margin-left:10px;"></label>
+                    </div>
+                    <div id="indic_mEq_options_mayor" class="mEq-options hidden">
+                        <label><input type="checkbox" name="indic_mEq_default" value="20"> 20 mEqm2scdía</label>
+                        <label><input type="checkbox" name="indic_mEq_default" value="30"> 30 mEqm2scdía</label>
+                        <label><input type="checkbox" name="indic_mEq_default" value="40"> 40 mEqm2scdía</label>
+                        <label><input type="checkbox" name="indic_mEq_default" value="otro"> Otro <input type="number" id="indic_mEq_otro_mayor" placeholder="Ingrese otro valor" disabled style="max-width:150px; margin-left:10px;"></label>
+                    </div>
+                </div>
+                
+                <div class="medicamentos">
+                    <p><strong>3. Medicamentos</strong></p>
+                    <div class="med-checkboxes">
+                        <div class="column">
+                            <div class="checkbox-item"><label><input type="checkbox" id="indic_med_omeprazol" name="indic_medicamento" value="Omeprazol"> Omeprazol</label></div>
+                            <div class="checkbox-item"><label><input type="checkbox" id="indic_med_ampicilina" name="indic_medicamento" value="Ampicilina"> Ampicilina</label></div>
+                            <div class="checkbox-item"><label><input type="checkbox" id="indic_med_amikacina" name="indic_medicamento" value="Amikacina"> Amikacina</label></div>
+                            <div class="checkbox-item"><label><input type="checkbox" id="indic_med_metronidazol" name="indic_medicamento" value="Metronidazol"> Metronidazol</label></div>
+                            <div class="checkbox-item"><label style="display: inline-block; margin-bottom: 0;"><input type="checkbox" id="indic_med_ceftriaxona" name="indic_medicamento" value="Ceftriaxona"> Ceftriaxona</label><input type="text" id="indic_autorizaCeftriaxona" placeholder="Infectólogo que autoriza" disabled class="hidden" style="margin-left:10px; max-width:150px;"></div>
+                            <div class="checkbox-item"><label style="display: inline-block; margin-bottom: 0;"><input type="checkbox" id="indic_med_cefuroxima" name="indic_medicamento" value="Cefuroxima"> Cefuroxima</label><input type="text" id="indic_autorizaCefuroxima" placeholder="Infectólogo que autoriza" disabled class="hidden" style="margin-left:10px; max-width:150px;"></div>
+                            <div class="checkbox-item"><label><input type="checkbox" id="indic_med_paracetamol" name="indic_medicamento" value="Paracetamol" checked> Paracetamol</label></div>
+                            <div class="checkbox-item"><label><input type="checkbox" id="indic_med_metamizol" name="indic_medicamento" value="Metamizol" checked> Metamizol</label></div>
+                            <div class="checkbox-item"><label><input type="checkbox" id="indic_med_ketorolaco" name="indic_medicamento" value="Ketorolaco"> Ketorolaco</label></div>
+                        </div>
+                        <div class="column">
+                            <div class="checkbox-item"><label><input type="checkbox" id="indic_med_ampicilina_suspend" name="indic_medicamento" value="Ampicilina SUSPENDER"> Ampicilina SUSPENDER</label></div>
+                            <div class="checkbox-item"><label><input type="checkbox" id="indic_med_amikacina_suspend" name="indic_medicamento" value="Amikacilina SUSPENDER"> Amikacilina SUSPENDER</label></div>
+                            <div class="checkbox-item"><label><input type="checkbox" id="indic_med_metronidazol_suspend" name="indic_medicamento" value="Metronidazol SUSPENDER"> Metronidazol SUSPENDER</label></div>
+                            <div class="checkbox-item"><label><input type="checkbox" id="indic_med_ceftriaxona_suspend" name="indic_medicamento" value="Ceftriaxona SUSPENDER"> Ceftriaxona SUSPENDER</label></div>
+                            <div class="checkbox-item"><label><input type="checkbox" id="indic_med_cefuroxima_suspend" name="indic_medicamento" value="Cefuroxima SUSPENDER"> Cefuroxima SUSPENDER</label></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="medidas">
+                    <p><strong>4. Medidas generales</strong></p>
+                    <div class="checkbox-item"><label><input type="checkbox" id="indic_medidas_penrose" name="indic_medida" value="Cuidados de penrose"> Cuidados de penrose</label></div>
+                    <div class="checkbox-item"><label><input type="checkbox" id="indic_medidas_cvc" name="indic_medida" value="Cuidados de catéter venoso central"> Cuidados de catéter venoso central</label></div>
+                </div>
+            </div>
+            
+            <div class="button-center">
+                <button onclick="indic_generarIndicaciones()">Generar Indicaciones Médicas</button>
+                <button onclick="indic_copyIndications()">Copiar indicaciones</button>
+            </div>
+        </div>
+        
+        <div class="indicaciones-container">
+            <div class="button-center">
+                <button onclick="indic_increaseFontSize()">+</button>
+                <button onclick="indic_decreaseFontSize()">-</button>
+            </div>
+            <textarea id="indicacionesText" rows="30" placeholder="Las indicaciones aparecerán aquí"></textarea>
+        </div>
     </div>
-  </div>
-  
-  <!-- Contenedor más ancho para mostrar el textarea y cambiar el tamaño de fuente -->
-  <div class="indicaciones-container">
-    <div class="button-center">
-      <button onclick="increaseFontSize()">+</button>
-      <button onclick="decreaseFontSize()">-</button>
+
+    <div id="tabGenNotas" class="tab-content">
+        <div class="container">
+            <h1>Formato de texto para Notas Postquirúrgicas</h1>
+            
+            <div class="input-group">
+                <label for="gen_noteTitle">Nombre del procedimiento:</label>
+                <input type="text" id="gen_noteTitle" placeholder="Ej: Cirugía de Apendicectomía">
+            </div>
+            
+            <div class="input-group">
+                <label>Descripción de la técnica:</label>
+                <div id="gen_editableContent" contenteditable="true" placeholder="Escribe el contenido de la nota aquí..."></div>
+            </div>
+            
+            <div class="button-group">
+                <button id="gen_highlightBtn" onclick="gen_highlightSelection()">🔍 Resaltar Texto Seleccionado</button>
+                <button id="gen_importBtn" onclick="gen_openImportModal()">📥 Importar Texto</button>
+                <button id="gen_generateBtn" onclick="gen_generateNote()">✨ Generar Nota</button>
+                
+                <div class="font-control">
+                    <button class="font-btn" onclick="gen_changeFontSize(-1)">-</button>
+                    <span id="gen_font-size-display">14px</span>
+                    <button class="font-btn" onclick="gen_changeFontSize(1)">+</button>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="gen_outputText">Texto formateado para que se agregue directamente al codigo fuente del visor de notas postquirurgicas y se reconozca adecuadamente:</label>
+                <div class="button-group">
+                    <button id="gen_copyBtn" onclick="gen_copyToClipboard()">📋 Copiar al Portapapeles</button>
+                </div>
+                <textarea id="gen_outputText" readonly></textarea>
+            </div>
+        </div>
+
+        <button id="gen_floatingRemoveBtn" onclick="gen_removeHighlight()">Quitar resaltado</button>
+
+        <div id="gen_importModal" class="modal">
+            <div class="modal-content">
+                <h3>Importar Texto Formateado</h3>
+                <textarea id="gen_importText" placeholder="Pega aquí el texto con formato. Ejemplo:&#10;[*Cirugía de Apendicectomía*]&#10;Esta es la [h]primera[/h] nota postquirúrgica."></textarea>
+                <div class="modal-buttons">
+                    <button onclick="gen_closeImportModal()">Cancelar</button>
+                    <button onclick="gen_importFormattedText()">Importar</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <textarea id="indicacionesText" rows="30" placeholder="Las indicaciones aparecerán aquí"></textarea>
-  </div>
-  
-  <script>
-    // Tamaño de fuente inicial para el textarea
-    var fontSize = 10;
+
+    <div id="tabVerNotas" class="tab-content">
+        <div id="ver_sidebar">
+            <h2>Notas Postquirúrgicas</h2>
+            
+            <div id="ver_search-container">
+                <input type="text" id="ver_note-search" placeholder="Buscar notas...">
+            </div>
+            
+            <div id="ver_notes-menu-container">
+                <div id="ver_notes-menu"></div>
+            </div>
+        </div>
+        
+        <div id="ver_content">
+            <div id="ver_note-display-container">
+                <textarea id="ver_text-display"></textarea>
+                <div id="ver_html-display">Cargando notas...</div>
+                <div id="ver_editable-display" contenteditable="true"></div>
+
+                <div id="ver_complications-container">
+                    <h3>Complicaciones Postquirúrgicas</h3>
+                    <div id="ver_complications-display"></div>
+                    <div id="ver_editable-complications" contenteditable="true"></div>
+                </div>
+            </div>
+            
+            <div id="ver_highlight-edit-container">
+                <input type="text" id="ver_highlight-edit-input">
+            </div>
+            
+            <div class="edit-buttons">
+                <button id="ver_save-button" onclick="ver_saveNote()">Guardar</button>
+                <button id="ver_cancel-edit-button" onclick="ver_cancelEdit()">Cancelar</button>
+            </div>
+            
+            <div class="button-container">
+                <div class="font-control">
+                    <button class="font-button" onclick="ver_changeFontSize(-1)">-</button>
+                    <span id="ver_font-size-display">14px</span>
+                    <button class="font-button" onclick="ver_changeFontSize(1)">+</button>
+                </div>
+                <button id="ver_edit-button" onclick="ver_enableEditing()">Editar Nota</button>
+            </div>
+            
+            <button id="ver_copy-button" onclick="ver_copyToClipboard()">Copiar al portapapeles</button>
+        </div>
+
+        <div id="ver_confirm-modal" class="modal">
+            <div class="modal-content">
+                <p id="ver_confirm-message">¿Estás seguro de cambiar de nota?<br>Se perderán los cambios no guardados.</p>
+                <div class="modal-buttons">
+                    <button class="modal-button modal-confirm" onclick="ver_confirmAction()">Continuar</button>
+                    <button class="modal-button modal-cancel" onclick="ver_cancelAction()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tabCalculadora" class="tab-content">
+        <div class="main-content-left">
+            <h2>Anotaciones especiales</h2>
+            <div class="left-and-middle-columns-wrapper">
+                <div class="left-column">
+
+                    <div class="title-button" data-title="Título 1" data-description="EJEMPLO DE TITULO 1
     
-    // Funciones para aumentar o disminuir el tamaño de fuente
-    function increaseFontSize() {
-      fontSize++;
-      document.getElementById('indicacionesText').style.fontSize = fontSize + "pt";
-    }
-    function decreaseFontSize() {
-      if(fontSize > 1) { // Evita que baje demasiado
-        fontSize--;
-        document.getElementById('indicacionesText').style.fontSize = fontSize + "pt";
-      }
+    1. Texto de ejemplo
+    2. Texto de ejemplo
+    3. Texto de ejemplo
+    
+    ">
+                        Título 1
+                    </div>
+
+                    <div class="title-button" data-title="Título 2" data-description="EJEMPLO DE TITULO 2
+    
+    a. Texto de ejemplo
+    b. Texto de ejemplo
+    c. Texto de ejemplo
+    
+    ">
+    
+                        Título 2 DOS
+                    </div>
+
+                    <div class="title-button" data-title="Título 3" data-description="EJEMPLO DE TITULO 3
+    
+    I. Texto de ejemplo
+    II. Texto de ejemplo
+    III. Texto de ejemplo
+    
+    ">
+                        Título 3 (tres)
+                    </div>
+
+                    <div class="title-button" data-title="Título 4" data-description="EJEMPLO DE TITULO 4
+    
+    1. Texto de ejemplo
+    2. Texto de ejemplo
+    3. Texto de ejemplo
+    
+    ">
+                        Título cuatro
+                    </div>
+
+
+                    <div class="title-button" data-title="Título 5" data-description="TITULO DEL TEXTO 5
+    
+    1. Contenido del texto
+    2. Contenido del texto
+    3. Contenido del texto
+    
+    ">
+                        Nombre de Botón 5
+                    </div>
+
+                    <div class="title-button" data-title="Título 6" data-description="TITULO DEL TEXTO 6
+    
+    1. Contenido del texto
+    2. Contenido del texto
+    3. Contenido del texto
+    
+    ">
+                        Nombre de Botón 6
+                    </div>
+
+                    <div class="title-button" data-title="Título 7" data-description="TITULO DEL TEXTO 7
+    
+    1. Contenido del texto
+    2. Contenido del texto
+    3. Contenido del texto
+    
+    ">
+                        Nombre de Botón 7
+                    </div>
+
+                    <div class="title-button" data-title="Título 8" data-description="TITULO DEL TEXTO 8
+    
+    1. Contenido del texto
+    2. Contenido del texto
+    3. Contenido del texto
+    
+    ">
+                        Nombre de Botón 8
+                    </div>
+
+                    <div class="title-button" data-title="Título 9" data-description="TITULO DEL TEXTO 9
+    
+    1. Contenido del texto
+    2. Contenido del texto
+    3. Contenido del texto
+    
+    ">
+                        Nombre de Botón 9
+                    </div>
+
+                    <div class="title-button" data-title="Título 10" data-description="TITULO DEL TEXTO 10
+    
+    1. Contenido del texto
+    2. Contenido del texto
+    3. Contenido del texto
+    
+    ">
+                        Nombre de Botón 10
+                    </div>
+
+
+
+
+
+                    </div>
+    
+                <div class="middle-column">
+                    <div class="description-text" id="descriptionOutput">
+    Elige una opcion.
+    
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="calculator">
+            <input type="text" class="calculator-screen" value="0" disabled />
+    
+            <div class="calculator-keys">
+                <button type="button" class="clear-key" value="C">C</button>
+                <button type="button" class="function-key" value="%">%</button>
+                <button type="button" class="operator" value="/"> &divide;</button>
+    
+                <button type="button" value="7">7</button>
+                <button type="button" value="8">8</button>
+                <button type="button" value="9">9</button>
+                <button type="button" class="operator" value="*">&times;</button>
+    
+                <button type="button" value="4">4</button>
+                <button type="button" value="5">5</button>
+                <button type="button" value="6">6</button>
+                <button type="button" class="operator" value="-">-</button>
+    
+                <button type="button" value="1">1</button>
+                <button type="button" value="2">2</button>
+                <button type="button" value="3">3</button>
+                <button type="button" class="operator" value="+">+</button>
+    
+                <button type="button" value="0">0</button>
+                <button type="button" class="decimal" value=".">.</button>
+                <button type="button" class="equal-sign operator" value="=">=</button>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+    // --- SCRIPT GLOBAL PARA PESTAÑAS ---
+    function openTab(evt, tabName) {
+        let i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tab-link");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = (tabName === 'tabVerNotas' || tabName === 'tabCalculadora') ? "flex" : "block";
+        evt.currentTarget.className += " active";
     }
 
-    // Función para redondear al múltiplo de 5 más cercano
-    function roundToNearest5(value) {
-      return Math.round(value / 5) * 5;
-    }
-    
-    // Función para forzar selección única en un grupo de checkboxes
-    function enforceSingleSelection(groupName) {
-      var boxes = document.getElementsByName(groupName);
-      boxes.forEach(function(box) {
-        box.addEventListener('change', function() {
-          if(this.checked) {
-            boxes.forEach(function(other) {
-              if(other !== box) {
-                other.checked = false;
-              }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar todas las pestañas
+        initIndicacionesTab();
+        initGenNotasTab();
+        initVerNotasTab();
+        initCalculadoraTab();
+
+        // Abrir la primera pestaña por defecto
+        document.getElementById("defaultOpen").click();
+    });
+
+
+    // --- SCRIPT PESTAÑA 1: GENERAR INDICACIONES ---
+    function initIndicacionesTab() {
+        let indic_fontSize = 10;
+        const indic_pesoInput = document.getElementById('indic_peso');
+        
+        window.indic_increaseFontSize = function() {
+            indic_fontSize++;
+            document.getElementById('indicacionesText').style.fontSize = indic_fontSize + "pt";
+        }
+        
+        window.indic_decreaseFontSize = function() {
+            if (indic_fontSize > 1) {
+                indic_fontSize--;
+                document.getElementById('indicacionesText').style.fontSize = indic_fontSize + "pt";
+            }
+        }
+        
+        function indic_roundToNearest5(value) { return Math.round(value / 5) * 5; }
+        
+        function indic_enforceSingleSelection(groupName) {
+            const boxes = document.getElementsByName(groupName);
+            boxes.forEach(box => {
+                box.addEventListener('change', function() {
+                    if (this.checked) {
+                        boxes.forEach(other => { if (other !== box) other.checked = false; });
+                    }
+                });
             });
-          }
-        });
-      });
-    }
-    
-    // Forzar selección única en los grupos de "liquidos_default" y "mEq_default"
-    enforceSingleSelection("liquidos_default");
-    enforceSingleSelection("mEq_default");
-    
-    // Actualizar visibilidad de opciones de líquidos según peso
-    function updateLiquidosOptions() {
-      var peso = parseFloat(document.getElementById('peso').value);
-      var grupoMenor = document.getElementById('liquidos_menor');
-      var grupoMayor = document.getElementById('liquidos_mayor');
-      if(isNaN(peso)) {
-        grupoMenor.classList.add('hidden');
-        grupoMayor.classList.add('hidden');
-      } else if(peso <= 10) {
-        grupoMenor.classList.remove('hidden');
-        grupoMayor.classList.add('hidden');
-      } else {
-        grupoMayor.classList.remove('hidden');
-        grupoMenor.classList.add('hidden');
-      }
-    }
-    
-    // Actualizar visibilidad de opciones de mEq según peso
-    function updateMEqOptions() {
-      var peso = parseFloat(document.getElementById('peso').value);
-      var grupoMenor = document.getElementById('mEq_options_menor');
-      var grupoMayor = document.getElementById('mEq_options_mayor');
-      if(isNaN(peso)) {
-        grupoMenor.classList.add('hidden');
-        grupoMayor.classList.add('hidden');
-      } else if(peso <= 10) {
-        grupoMenor.classList.remove('hidden');
-        grupoMayor.classList.add('hidden');
-      } else {
-        grupoMayor.classList.remove('hidden');
-        grupoMenor.classList.add('hidden');
-      }
-    }
-    
-    // Actualizar el campo "Otro" para un grupo de opciones
-    function updateOtroField(groupName, otroFieldId) {
-      var radios = document.getElementsByName(groupName);
-      var otroField = document.getElementById(otroFieldId);
-      for(var i = 0; i < radios.length; i++){
-        if(radios[i].checked && radios[i].value === "otro"){
-          otroField.disabled = false;
-          return;
         }
-      }
-      otroField.disabled = true;
-      otroField.value = "";
-    }
-    
-    // Agregar event listeners para actualizar opciones al modificar el peso
-    document.getElementById('peso').addEventListener('input', function(){
-      updateLiquidosOptions();
-      updateMEqOptions();
-    });
-    
-    document.addEventListener('change', function(e){
-      if(e.target.name === "liquidos_default"){
-        if(!document.getElementById('liquidos_menor').classList.contains('hidden')){
-          updateOtroField("liquidos_default", "liquidos_otro_menor");
-        } else if(!document.getElementById('liquidos_mayor').classList.contains('hidden')){
-          updateOtroField("liquidos_default", "liquidos_otro_mayor");
-        }
-      }
-      if(e.target.name === "mEq_default"){
-        if(!document.getElementById('mEq_options_menor').classList.contains('hidden')){
-          updateOtroField("mEq_default", "mEq_otro_menor");
-        } else if(!document.getElementById('mEq_options_mayor').classList.contains('hidden')){
-          updateOtroField("mEq_default", "mEq_otro_mayor");
-        }
-      }
-    });
-    
-    // Configurar que en la sección de Dieta solo se permita seleccionar uno
-    var dietaCheckboxes = document.querySelectorAll('input[name="dieta"]');
-    dietaCheckboxes.forEach(function(checkbox){
-      checkbox.addEventListener('change', function(){
-        if(this.checked){
-          dietaCheckboxes.forEach(function(other){
-            if(other !== checkbox){
-              other.checked = false;
+        
+        indic_enforceSingleSelection("indic_liquidos_default");
+        indic_enforceSingleSelection("indic_mEq_default");
+        indic_enforceSingleSelection("indic_dieta");
+
+        function indic_updateLiquidosOptions() {
+            const peso = parseFloat(indic_pesoInput.value);
+            const grupoMenor = document.getElementById('indic_liquidos_menor');
+            const grupoMayor = document.getElementById('indic_liquidos_mayor');
+            if (isNaN(peso)) {
+                grupoMenor.classList.add('hidden');
+                grupoMayor.classList.add('hidden');
+            } else if (peso <= 10) {
+                grupoMenor.classList.remove('hidden');
+                grupoMayor.classList.add('hidden');
+            } else {
+                grupoMayor.classList.remove('hidden');
+                grupoMenor.classList.add('hidden');
             }
-          });
         }
-      });
-    });
-    
-    // Habilita/deshabilita el campo de "Infectólogo que autoriza" para Ceftriaxona
-    var ceftriaxonaCheckbox = document.getElementById('med_ceftriaxona');
-    var autorizaCeftriaxonaInput = document.getElementById('autorizaCeftriaxona');
-    ceftriaxonaCheckbox.addEventListener('change', function(){
-      if(this.checked){
-        autorizaCeftriaxonaInput.disabled = false;
-        autorizaCeftriaxonaInput.classList.remove('hidden');
-      } else {
-        autorizaCeftriaxonaInput.disabled = true;
-        autorizaCeftriaxonaInput.classList.add('hidden');
-        autorizaCeftriaxonaInput.value = "";
-      }
-    });
-    
-    // Función para generar las indicaciones
-    function generarIndicaciones() {
-      // 1) Validación de peso
-      var peso = parseFloat(document.getElementById('peso').value);
-      if(isNaN(peso) || peso <= 0){
-        document.getElementById('indicacionesText').value = "Por favor, ingrese un peso válido.";
-        return;
-      }
-      
-      // 2) Validar que se haya seleccionado algo en líquidos totales
-      var radiosLiquidos = document.getElementsByName("liquidos_default");
-      var seleccionadoLiquidos = "";
-      for(var i = 0; i < radiosLiquidos.length; i++){
-        if(radiosLiquidos[i].checked){
-          seleccionadoLiquidos = radiosLiquidos[i].value;
-          break;
-        }
-      }
-      if(!seleccionadoLiquidos){
-        document.getElementById('indicacionesText').value = "Por favor, seleccione un valor válido en líquidos totales.";
-        return;
-      }
-      
-      // 3) Validar Cloruro de potasio
-      var radiosMEq = document.getElementsByName("mEq_default");
-      var seleccionadoMEq = "";
-      for(var i = 0; i < radiosMEq.length; i++){
-        if(radiosMEq[i].checked){
-          seleccionadoMEq = radiosMEq[i].value;
-          break;
-        }
-      }
-      if(!seleccionadoMEq){
-        document.getElementById('indicacionesText').value = "Por favor, seleccione un valor válido para Cloruro de potasio.";
-        return;
-      }
-      
-      // 4) Si hasta aquí todo bien, calculamos normal
-      var sc = (peso * 4 + 7) / (peso + 90);
-      var hoy = new Date();
-      var dd = hoy.getDate();
-      if(dd < 10) dd = '0' + dd;
-      var mm = hoy.getMonth() + 1;
-      if(mm < 10) mm = '0' + mm;
-      var yy = hoy.getFullYear().toString().slice(-2);
-      var currentDateStr = dd + '/' + mm + '/' + yy;
-      
-      var indicaciones = "INDICACIONES MÉDICAS POSTQUIRÚRGICAS\n";
-      indicaciones += "Peso: " + peso + " kg    SC: " + sc.toFixed(2) + "\n\n";
-      
-      // Sección 1: Dieta
-      var dietaSelected = "";
-      dietaCheckboxes.forEach(function(checkbox){
-        if(checkbox.checked){
-          dietaSelected = checkbox.value;
-        }
-      });
-      indicaciones += "1. " + dietaSelected + "\n\n";
-      
-      // Sección 2: Soluciones - Líquidos totales
-      var liquidos;
-      if(peso <= 10){
-        if(seleccionadoLiquidos === "otro"){
-          liquidos = parseFloat(document.getElementById("liquidos_otro_menor").value);
-          if(isNaN(liquidos) || liquidos<=0){
-            document.getElementById('indicacionesText').value = "Por favor, ingrese un valor numérico válido en 'Otro' (Líquidos totales).";
-            return;
-          }
-        } else {
-          liquidos = parseFloat(seleccionadoLiquidos);
-        }
-      } else {
-        if(seleccionadoLiquidos === "otro"){
-          liquidos = parseFloat(document.getElementById("liquidos_otro_mayor").value);
-          if(isNaN(liquidos) || liquidos<=0){
-            document.getElementById('indicacionesText').value = "Por favor, ingrese un valor numérico válido en 'Otro' (Líquidos totales).";
-            return;
-          }
-        } else {
-          liquidos = parseFloat(seleccionadoLiquidos);
-        }
-      }
-      
-      var unidad = (peso <= 10) ? "mlkgdía" : "mlm2scdía";
-      indicaciones += "2. Soluciones calculadas a " + liquidos + " " + unidad + " para rol de 8 horas";
-      
-      // Calcular Volumen total (XX)
-      var vol;
-      if(isNaN(liquidos)){
-        vol = "X";
-      } else {
-        var baseValue = (peso <= 10) ? peso : parseFloat(sc.toFixed(2));
-        var rawVol = (baseValue * liquidos) / 3;
-        var rounded = Math.round(rawVol);
-        // Ajuste para volverlo par
-        if(rounded % 2 !== 0){
-          var lower = rounded - 1;
-          var upper = rounded + 1;
-          rounded = (Math.abs(rawVol - lower) <= Math.abs(rawVol - upper)) ? lower : upper;
-        }
-        vol = rounded;
-      }
-      
-      // Calcular Velocidad de infusión (YY)
-      var vel;
-      if(vol === "X"){
-        vel = "X";
-      } else {
-        var rawVel = vol / 8;
-        vel = (rawVel % 1 === 0) ? rawVel.toString() : (Math.round(rawVel * 10) / 10).toString();
-      }
-      indicaciones += "\n  -Volumen total: " + vol + " ml    -Velocidad de infusión: " + vel + " ml/hora";
-      
-      // Sección 2: Soluciones - mEq Cloruro de potasio
-      var mEqValue;
-      if(peso <= 10){
-        if(seleccionadoMEq === "otro"){
-          mEqValue = parseFloat(document.getElementById("mEq_otro_menor").value);
-          if(isNaN(mEqValue) || mEqValue<=0){
-            document.getElementById('indicacionesText').value = "Por favor, ingrese un valor numérico válido en 'Otro' (Cloruro de potasio).";
-            return;
-          }
-        } else {
-          mEqValue = parseFloat(seleccionadoMEq);
-        }
-      } else {
-        if(seleccionadoMEq === "otro"){
-          mEqValue = parseFloat(document.getElementById("mEq_otro_mayor").value);
-          if(isNaN(mEqValue) || mEqValue<=0){
-            document.getElementById('indicacionesText').value = "Por favor, ingrese un valor numérico válido en 'Otro' (Cloruro de potasio).";
-            return;
-          }
-        } else {
-          mEqValue = parseFloat(seleccionadoMEq);
-        }
-      }
-      
-      var newYY;
-      if(isNaN(mEqValue)){
-        newYY = "X";
-      } else {
-        var baseForYY = (peso <= 10) ? peso : parseFloat(sc.toFixed(2));
-        var rawYY = (mEqValue * baseForYY) / 3;
-        newYY = (rawYY % 1 === 0) ? rawYY.toString() : (Math.round(rawYY * 10) / 10).toString();
-      }
-      var unitForMEq = (peso <= 10) ? "mEqkgdía" : "mEqm2scdía";
-      
-      // Sección para soluciones dextrosa y salina (redondeo a múltiplos de 5)
-      var solGlucosada, solSalina;
-      if(vol === "X"){
-        solGlucosada = "X";
-        solSalina = "X";
-      } else {
-        // La mitad del volumen total (vol/2) y redondeado a múltiplo de 5
-        solGlucosada = roundToNearest5(vol / 2);
-        solSalina = solGlucosada;
-      }
-      
-      indicaciones += "\n\n-Solución glucosada al 5%............... " + solGlucosada + " ml";
-      indicaciones += "\n-Solución salina al 0.9%................ " + solSalina + " ml";
-      // Luego, agregar la línea de KCl
-      indicaciones += "\n-KCl.................................... " + newYY + " mEq (" + mEqValue + " " + unitForMEq + ")";
-      
-      // Sección 3: Medicamentos
-      var medCheckboxes = document.querySelectorAll('input[name="medicamento"]:checked');
-      var hasParacetamol = false, hasMetamizol = false, hasKetorolaco = false;
-      medCheckboxes.forEach(function(cb){
-        if(cb.value === "Paracetamol") { hasParacetamol = true; }
-        if(cb.value === "Metamizol") { hasMetamizol = true; }
-        if(cb.value === "Ketorolaco") { hasKetorolaco = true; }
-      });
-      if(medCheckboxes.length > 0) {
-        indicaciones += "\n\n3. Medicamentos";
-        var medDosages = {
-          "Omeprazol": { dosage: 1, divisor: 1, frequencyText: "mg intravenoso cada 24 horas", maxDose: 40 },
-          "Ampicilina": { dosage: 100, divisor: 4, frequencyText: "mg intravenoso cada 6 horas (FI:" + currentDateStr + "/0)" },
-          "Amikacina": { dosage: 15, divisor: 1, frequencyText: "mg intravenoso cada 24 horas (FI:" + currentDateStr + "/0)" },
-          "Metronidazol": { dosage: 30, divisor: 3, frequencyText: "mg intravenoso cada 8 horas (FI:" + currentDateStr + "/0)" },
-          "Ceftriaxona": { dosage: 75, divisor: 2, frequencyText: "mg intravenoso cada 12 horas (FI:" + currentDateStr + "/0)" },
-          "Paracetamol": { dosage: 15, divisor: 1, frequencyText: "mg intravenoso cada 8 horas" },
-          "Metamizol": { dosage: 15, divisor: 1, frequencyText: "mg intravenoso cada 8 horas" },
-          "Ketorolaco": { dosage: 1, divisor: 1, frequencyText: "mg intravenoso cada 8 horas", maxDose: 30 }
-        };
-        medCheckboxes.forEach(function(medCheckbox){
-          var medName = medCheckbox.value;
-          if(medName.indexOf("SUSPENDER") !== -1) {
-            indicaciones += "\n-" + medName;
-          } else {
-            var params = medDosages[medName];
-            if(params) {
-              var xValue;
-              // Redondea a múltiplos de 5 para algunos
-              if(["Ampicilina","Amikacina","Metronidazol","Ceftriaxona","Paracetamol","Metamizol"].includes(medName)) {
-                xValue = roundToNearest5(peso * params.dosage / params.divisor);
-              } else {
-                xValue = Math.round(peso * params.dosage / params.divisor);
-              }
-              if(medName === "Omeprazol" && params.maxDose && xValue > params.maxDose) {
-                xValue = params.maxDose;
-              }
-              if(medName === "Ketorolaco" && params.maxDose && xValue > params.maxDose) {
-                xValue = params.maxDose;
-              }
-              var alternado = "";
-              if(medName === "Paracetamol") {
-                if(hasMetamizol) {
-                  alternado = " alternado con Metamizol";
-                } else if(hasKetorolaco) {
-                  alternado = " alternado con Ketorolaco";
-                }
-              } else if(medName === "Metamizol") {
-                if(!hasParacetamol && hasKetorolaco) {
-                  alternado = " alternado con Ketorolaco";
-                }
-              }
-              // Agregar "Administrar" antes de la dosis
-              indicaciones += "\n-" + medName + " (" + params.dosage + " mgkgdía) Administrar " + xValue + " " + params.frequencyText + alternado;
-              
-              // Si es Ceftriaxona, revisa si se llenó el infectólogo que autoriza
-              if(medName === "Ceftriaxona"){
-                var autoriza = document.getElementById('autorizaCeftriaxona').value.trim();
-                if(autoriza !== ""){
-                  indicaciones += " (Autoriza " + autoriza + ")";
-                }
-              }
+
+        function indic_updateMEqOptions() {
+            const peso = parseFloat(indic_pesoInput.value);
+            const grupoMenor = document.getElementById('indic_mEq_options_menor');
+            const grupoMayor = document.getElementById('indic_mEq_options_mayor');
+            if (isNaN(peso)) {
+                grupoMenor.classList.add('hidden');
+                grupoMayor.classList.add('hidden');
+            } else if (peso <= 10) {
+                grupoMenor.classList.remove('hidden');
+                grupoMayor.classList.add('hidden');
+            } else {
+                grupoMayor.classList.remove('hidden');
+                grupoMenor.classList.add('hidden');
             }
-          }
+        }
+
+        function indic_updateOtroField(groupName, otroFieldId) {
+            const radios = document.getElementsByName(groupName);
+            const otroField = document.getElementById(otroFieldId);
+            for (let i = 0; i < radios.length; i++) {
+                if (radios[i].checked && radios[i].value === "otro") {
+                    otroField.disabled = false;
+                    return;
+                }
+            }
+            otroField.disabled = true;
+            otroField.value = "";
+        }
+
+        indic_pesoInput.addEventListener('input', () => {
+            indic_updateLiquidosOptions();
+            indic_updateMEqOptions();
         });
-      }
-      
-      // Sección 4: Medidas generales
-      var medidasTexto = "\n\n4. Medidas generales";
-      medidasTexto += "\n-Cuidados generales de enfermería";
-      medidasTexto += "\n-Signos vitales por turno";
-      medidasTexto += "\n-Balance hídrico y uresis por turno";
-      medidasTexto += "\n-Perímetro abdominal por turno";
-      medidasTexto += "\n-Cuidados de herida quirúrgica y cambio de gasas por razón necesaria";
-      if(document.getElementById('medidas_penrose').checked) {
-        medidasTexto += "\n-Cuidados de drenaje penrose, cuantificar gasto y características";
-      }
-      if(document.getElementById('medidas_cvc').checked) {
-        medidasTexto += "\n-Cuidados de catéter venoso central";
-      }
-      medidasTexto += "\n-Reportar eventualidades";
-      
-      indicaciones += medidasTexto;
-      
-      document.getElementById('indicacionesText').value = indicaciones;
-    }
-    
-    // Función para copiar las indicaciones al portapapeles
-    function copyIndications() {
-      var indicaciones = document.getElementById('indicacionesText').value;
-      if(!navigator.clipboard) {
-        var textareaTemp = document.createElement("textarea");
-        textareaTemp.value = indicaciones;
-        document.body.appendChild(textareaTemp);
-        textareaTemp.select();
-        document.execCommand("copy");
-        document.body.removeChild(textareaTemp);
-        alert("Indicaciones copiadas al portapapeles.");
-      } else {
-        navigator.clipboard.writeText(indicaciones).then(function() {
-          alert("Indicaciones copiadas al portapapeles.");
-        }, function(err) {
-          alert("Error al copiar: " + err);
+
+        document.getElementById('tabIndicaciones').addEventListener('change', function(e) {
+            if (e.target.name === "indic_liquidos_default") {
+                if (!document.getElementById('indic_liquidos_menor').classList.contains('hidden')) {
+                    indic_updateOtroField("indic_liquidos_default", "indic_liquidos_otro_menor");
+                } else if (!document.getElementById('indic_liquidos_mayor').classList.contains('hidden')) {
+                    indic_updateOtroField("indic_liquidos_default", "indic_liquidos_otro_mayor");
+                }
+            }
+            if (e.target.name === "indic_mEq_default") {
+                if (!document.getElementById('indic_mEq_options_menor').classList.contains('hidden')) {
+                    indic_updateOtroField("indic_mEq_default", "indic_mEq_otro_menor");
+                } else if (!document.getElementById('indic_mEq_options_mayor').classList.contains('hidden')) {
+                    indic_updateOtroField("indic_mEq_default", "indic_mEq_otro_mayor");
+                }
+            }
         });
-      }
+
+        const ceftriaxonaCheckbox = document.getElementById('indic_med_ceftriaxona');
+        const autorizaCeftriaxonaInput = document.getElementById('indic_autorizaCeftriaxona');
+        ceftriaxonaCheckbox.addEventListener('change', function() {
+            autorizaCeftriaxonaInput.disabled = !this.checked;
+            autorizaCeftriaxonaInput.classList.toggle('hidden', !this.checked);
+            if (!this.checked) autorizaCeftriaxonaInput.value = "";
+        });
+
+        const cefuroximaCheckbox = document.getElementById('indic_med_cefuroxima');
+        const autorizaCefuroximaInput = document.getElementById('indic_autorizaCefuroxima');
+        cefuroximaCheckbox.addEventListener('change', function() {
+            autorizaCefuroximaInput.disabled = !this.checked;
+            autorizaCefuroximaInput.classList.toggle('hidden', !this.checked);
+            if (!this.checked) autorizaCefuroximaInput.value = "";
+        });
+
+        window.indic_generarIndicaciones = function() {
+            const peso = parseFloat(document.getElementById('indic_peso').value);
+            if (isNaN(peso) || peso <= 0) {
+                document.getElementById('indicacionesText').value = "Por favor, ingrese un peso válido.";
+                return;
+            }
+            
+            const radiosLiquidos = document.getElementsByName("indic_liquidos_default");
+            let seleccionadoLiquidos = Array.from(radiosLiquidos).find(r => r.checked)?.value;
+            if (!seleccionadoLiquidos) {
+                document.getElementById('indicacionesText').value = "Por favor, seleccione un valor válido en líquidos totales.";
+                return;
+            }
+
+            const radiosMEq = document.getElementsByName("indic_mEq_default");
+            let seleccionadoMEq = Array.from(radiosMEq).find(r => r.checked)?.value;
+            if (!seleccionadoMEq) {
+                document.getElementById('indicacionesText').value = "Por favor, seleccione un valor válido para Cloruro de potasio.";
+                return;
+            }
+
+            const sc = (peso * 4 + 7) / (peso + 90);
+            const hoy = new Date();
+            const dd = String(hoy.getDate()).padStart(2, '0');
+            const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+            const yy = hoy.getFullYear().toString().slice(-2);
+            const currentDateStr = `${dd}/${mm}/${yy}`;
+
+            let indicaciones = `INDICACIONES MÉDICAS POSTQUIRÚRGICAS\n`;
+            indicaciones += `Peso: ${peso} kg    SC: ${sc.toFixed(2)}\n\n`;
+
+            const dietaSelected = document.querySelector('input[name="indic_dieta"]:checked')?.value || "Ayuno";
+            indicaciones += `1. ${dietaSelected}\n\n`;
+
+            let liquidos;
+            if (peso <= 10) {
+                liquidos = seleccionadoLiquidos === "otro" ? parseFloat(document.getElementById("indic_liquidos_otro_menor").value) : parseFloat(seleccionadoLiquidos);
+            } else {
+                liquidos = seleccionadoLiquidos === "otro" ? parseFloat(document.getElementById("indic_liquidos_otro_mayor").value) : parseFloat(seleccionadoLiquidos);
+            }
+            if (isNaN(liquidos) || liquidos <= 0) {
+                 document.getElementById('indicacionesText').value = "Por favor, ingrese un valor numérico válido en 'Otro' (Líquidos totales).";
+                 return;
+            }
+
+            const unidad = (peso <= 10) ? "mlkgdía" : "mlm2scdía";
+            indicaciones += `2. Soluciones calculadas a ${liquidos} ${unidad} para rol de 8 horas`;
+
+            const baseValue = (peso <= 10) ? peso : parseFloat(sc.toFixed(2));
+            const rawVol = (baseValue * liquidos) / 3;
+            let rounded = Math.round(rawVol);
+            if (rounded % 2 !== 0) {
+                const lower = rounded - 1;
+                const upper = rounded + 1;
+                rounded = (Math.abs(rawVol - lower) <= Math.abs(rawVol - upper)) ? lower : upper;
+            }
+            const vol = rounded;
+            const vel = (vol / 8).toFixed(1).replace(/\.0$/, '');
+            indicaciones += `\n  -Volumen total: ${vol} ml    -Velocidad de infusión: ${vel} ml/hora`;
+
+            let mEqValue;
+            if (peso <= 10) {
+                mEqValue = seleccionadoMEq === "otro" ? parseFloat(document.getElementById("indic_mEq_otro_menor").value) : parseFloat(seleccionadoMEq);
+            } else {
+                mEqValue = seleccionadoMEq === "otro" ? parseFloat(document.getElementById("indic_mEq_otro_mayor").value) : parseFloat(seleccionadoMEq);
+            }
+            if (isNaN(mEqValue) || mEqValue <= 0) {
+                document.getElementById('indicacionesText').value = "Por favor, ingrese un valor numérico válido en 'Otro' (Cloruro de potasio).";
+                return;
+            }
+
+            const baseForYY = (peso <= 10) ? peso : parseFloat(sc.toFixed(2));
+            const rawYY = (mEqValue * baseForYY) / 3;
+            const newYY = (rawYY % 1 === 0) ? rawYY.toString() : rawYY.toFixed(1);
+            const unitForMEq = (peso <= 10) ? "mEqkgdía" : "mEqm2scdía";
+
+            const solGlucosada = indic_roundToNearest5(vol / 2);
+            const solSalina = solGlucosada;
+
+            indicaciones += `\n\n-Solución glucosada al 5%............... ${solGlucosada} ml`;
+            indicaciones += `\n-Solución salina al 0.9%................ ${solSalina} ml`;
+            indicaciones += `\n-KCl.................................... ${newYY} mEq (${mEqValue} ${unitForMEq})`;
+
+            const medCheckboxes = document.querySelectorAll('input[name="indic_medicamento"]:checked');
+            if (medCheckboxes.length > 0) {
+                indicaciones += "\n\n3. Medicamentos";
+                const hasParacetamol = !!document.getElementById('indic_med_paracetamol').checked;
+                const hasMetamizol = !!document.getElementById('indic_med_metamizol').checked;
+                const hasKetorolaco = !!document.getElementById('indic_med_ketorolaco').checked;
+
+                const medDosages = {
+                    "Omeprazol": { dosage: 1, divisor: 1, frequencyText: "mg intravenoso cada 24 horas", maxDose: 40 },
+                    "Ampicilina": { dosage: 100, divisor: 4, frequencyText: `mg intravenoso cada 6 horas (FI:${currentDateStr}/0)` },
+                    "Amikacina": { dosage: 15, divisor: 1, frequencyText: `mg intravenoso cada 24 horas (FI:${currentDateStr}/0)` },
+                    "Metronidazol": { dosage: 30, divisor: 3, frequencyText: `mg intravenoso cada 8 horas (FI:${currentDateStr}/0)` },
+                    "Ceftriaxona": { dosage: 75, divisor: 2, frequencyText: `mg intravenoso cada 12 horas (FI:${currentDateStr}/0)` },
+                    "Cefuroxima": { dosage: 150, divisor: 3, frequencyText: `mg intravenoso cada 8 horas (FI:${currentDateStr}/0)` },
+                    "Paracetamol": { dosage: 15, divisor: 1, frequencyText: "mg intravenoso cada 8 horas" },
+                    "Metamizol": { dosage: 15, divisor: 1, frequencyText: "mg intravenoso cada 8 horas" },
+                    "Ketorolaco": { dosage: 1, divisor: 1, frequencyText: "mg intravenoso cada 8 horas", maxDose: 30 }
+                };
+
+                medCheckboxes.forEach(medCheckbox => {
+                    const medName = medCheckbox.value;
+                    if (medName.includes("SUSPENDER")) {
+                        indicaciones += `\n-${medName}`;
+                    } else {
+                        const params = medDosages[medName];
+                        if (params) {
+                            let xValue;
+                            if (["Ampicilina", "Amikacina", "Metronidazol", "Ceftriaxona", "Cefuroxima", "Paracetamol", "Metamizol"].includes(medName)) {
+                                xValue = indic_roundToNearest5(peso * params.dosage / params.divisor);
+                            } else {
+                                xValue = Math.round(peso * params.dosage / params.divisor);
+                            }
+                            if (params.maxDose && xValue > params.maxDose) {
+                                xValue = params.maxDose;
+                            }
+                            let alternado = "";
+                            if (medName === "Paracetamol") {
+                                if (hasMetamizol) alternado = " alternado con Metamizol";
+                                else if (hasKetorolaco) alternado = " alternado con Ketorolaco";
+                            } else if (medName === "Metamizol") {
+                                if (!hasParacetamol && hasKetorolaco) alternado = " alternado con Ketorolaco";
+                            }
+                            indicaciones += `\n-${medName} (${params.dosage} mgkgdía) Administrar ${xValue} ${params.frequencyText}${alternado}`;
+                            if (medName === "Ceftriaxona" || medName === "Cefuroxima") {
+                                const autoriza = document.getElementById(`indic_autoriza${medName}`).value.trim();
+                                if (autoriza !== "") indicaciones += ` (Autoriza ${autoriza})`;
+                            }
+                        }
+                    }
+                });
+            }
+
+            let medidasTexto = "\n\n4. Medidas generales";
+            medidasTexto += "\n-Cuidados generales de enfermería";
+            medidasTexto += "\n-Signos vitales por turno";
+            medidasTexto += "\n-Balance hídrico y uresis por turno";
+            medidasTexto += "\n-Perímetro abdominal por turno";
+            medidasTexto += "\n-Cuidados de herida quirúrgica y cambio de gasas por razón necesaria";
+            if (document.getElementById('indic_medidas_penrose').checked) medidasTexto += "\n-Cuidados de drenaje penrose, cuantificar gasto y características";
+            if (document.getElementById('indic_medidas_cvc').checked) medidasTexto += "\n-Cuidados de catéter venoso central";
+            medidasTexto += "\n-Reportar eventualidades";
+            indicaciones += medidasTexto;
+            document.getElementById('indicacionesText').value = indicaciones;
+        }
+
+        window.indic_copyIndications = function() {
+            const indicaciones = document.getElementById('indicacionesText').value;
+            navigator.clipboard.writeText(indicaciones).then(() => {
+                alert('Indicaciones copiadas al portapapeles.');
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+            });
+        }
     }
-  </script>
+
+
+    // --- SCRIPT PESTAÑA 2: GENERAR NOTAS ---
+    function initGenNotasTab() {
+        let gen_currentFontSize = 14;
+        let gen_currentHighlight = null;
+        const gen_editableContent = document.getElementById('gen_editableContent');
+        const gen_floatingBtn = document.getElementById('gen_floatingRemoveBtn');
+        const gen_fontSizeDisplay = document.getElementById('gen_font-size-display');
+        const gen_importModal = document.getElementById('gen_importModal');
+
+        gen_editableContent.addEventListener('click', function(e) {
+            if (e.target.classList.contains('highlight')) {
+                gen_currentHighlight = e.target;
+                positionRemoveButton(e.target);
+                gen_floatingBtn.style.display = 'block';
+            } else {
+                gen_floatingBtn.style.display = 'none';
+                gen_currentHighlight = null;
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                gen_floatingBtn.style.display = 'none';
+                if(gen_importModal) gen_importModal.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (gen_floatingBtn && e.target !== gen_floatingBtn && !e.target.classList.contains('highlight')) {
+                gen_floatingBtn.style.display = 'none';
+            }
+        });
+        
+        function positionRemoveButton(highlightElement) {
+            const rect = highlightElement.getBoundingClientRect();
+            gen_floatingBtn.style.top = `${window.scrollY + rect.top - 30}px`;
+            gen_floatingBtn.style.left = `${window.scrollX + rect.left}px`;
+        }
+
+        window.gen_removeHighlight = function() {
+            if (gen_currentHighlight) {
+                const textNode = document.createTextNode(gen_currentHighlight.textContent);
+                gen_currentHighlight.parentNode.replaceChild(textNode, gen_currentHighlight);
+                gen_floatingBtn.style.display = 'none';
+                gen_currentHighlight = null;
+            }
+        }
+
+        window.gen_highlightSelection = function() {
+            const selection = window.getSelection();
+            if (!selection || selection.isCollapsed) {
+                alert('Por favor selecciona texto para resaltar');
+                return;
+            }
+            const range = selection.getRangeAt(0);
+            if (!range.toString().trim()) {
+                alert('Por favor selecciona texto válido para resaltar');
+                return;
+            }
+            const highlight = document.createElement('span');
+            highlight.className = 'highlight';
+            highlight.textContent = range.toString();
+            range.deleteContents();
+            range.insertNode(highlight);
+            selection.removeAllRanges();
+        }
+
+        window.gen_generateNote = function() {
+            const title = document.getElementById('gen_noteTitle').value.trim();
+            if (!title) {
+                alert('Por favor ingresa un título para la nota');
+                return;
+            }
+            if (!gen_editableContent.textContent.trim()) {
+                alert('Por favor ingresa contenido para la nota');
+                return;
+            }
+            const clone = gen_editableContent.cloneNode(true);
+            const highlights = clone.querySelectorAll('.highlight');
+            highlights.forEach(h => {
+                const textNode = document.createTextNode(`[h]${h.textContent}[/h]`);
+                h.parentNode.replaceChild(textNode, h);
+            });
+            const content = clone.innerHTML.replace(/<div>/g, '\n').replace(/<\/div>/g, '').replace(/<br>/g, '\n');
+            document.getElementById('gen_outputText').value = `[*${title}*]\n${content}`;
+        }
+
+        window.gen_copyToClipboard = function() {
+            const outputText = document.getElementById('gen_outputText');
+            if (!outputText.value) {
+                alert('No hay texto para copiar. Genera una nota primero.');
+                return;
+            }
+            navigator.clipboard.writeText(outputText.value).then(() => {
+                const copyBtn = document.getElementById('gen_copyBtn');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '✓ Copiado!';
+                copyBtn.style.backgroundColor = '#4CAF50';
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.backgroundColor = '#2196F3';
+                }, 2000);
+            });
+        }
+
+        window.gen_changeFontSize = function(change) {
+            gen_currentFontSize += change;
+            if (gen_currentFontSize < 12) gen_currentFontSize = 12;
+            if (gen_currentFontSize > 24) gen_currentFontSize = 24;
+            gen_fontSizeDisplay.textContent = `${gen_currentFontSize}px`;
+            gen_editableContent.style.fontSize = `${gen_currentFontSize}px`;
+            document.getElementById('gen_outputText').style.fontSize = `${gen_currentFontSize}px`;
+        }
+        
+        window.gen_openImportModal = function() { gen_importModal.style.display = 'flex'; }
+        window.gen_closeImportModal = function() { gen_importModal.style.display = 'none'; }
+
+        window.gen_importFormattedText = function() {
+            const importText = document.getElementById('gen_importText').value.trim();
+            if (!importText) {
+                alert('Por favor ingresa texto para importar');
+                return;
+            }
+            const titleMatch = importText.match(/^\[\*(.*?)\*\]/);
+            if (!titleMatch) {
+                alert('Formato incorrecto. Debe comenzar con [*Título*]');
+                return;
+            }
+            const title = titleMatch[1];
+            let content = importText.substring(titleMatch[0].length).trim();
+            content = content.replace(/\[h\](.*?)\[\/h\]/g, '<span class="highlight">$1</span>').replace(/\n/g, '<br>');
+            document.getElementById('gen_noteTitle').value = title;
+            gen_editableContent.innerHTML = content;
+            gen_closeImportModal();
+        }
+    }
+
+
+    // --- SCRIPT PESTAÑA 3: VER NOTAS ---
+    function initVerNotasTab() {
+        let ver_currentNote = null;
+        let ver_currentFontSize = 14;
+        let ver_notesData = {};
+        let ver_pendingAction = null;
+        let ver_isEditing = false;
+        let ver_originalNoteContent = { description: '', complications: '' };
+        let ver_currentHighlightElement = null;
+        let ver_allMenuItems = [];
+
+        // --- CONTENIDO DE LAS NOTAS ---
+        const notesText = `[*PROCEDIMIENTOS*]
+Seleccione un procedimiento quirúrgico para ver su descripción.
+[c]Sin complicaciones asociadas.[/c]
+
+[*Apendicectomía laparoscópica*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Apendicectomía abierta*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Colocación de catéter venoso central*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Circuncisión*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Hernioplastia inguinal hombre*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Hernioplastia inguinal mujer*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Hernioplastia umbilical*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Orquidopexia abierta*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Orquidopexia laparoscópica*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Orquiectomía + orquidopexia transescrotal contralateral*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Resección de quiste de epidídimo*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Colocación de sello pleural*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Colocación de catéter puerto*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Colocación de catéter venoso central ecoguiado*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Retiro de catéter puerto*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Colocación de catéter para hemodiálisis*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Colocación de catéter para diálisis peritoneal*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Colecistectomía laparoscópica*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Toracotomía y plastia esofágica*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Resección de quiste de colédoco*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*LAPE + desinvaginación intestinal por taxis*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*Gastrostomía laparoscópica con técnica de punto en U*]
+Descripción de la técnica
+[c]Riesgos y complicaciones.[/c]
+
+[*PROCEDIMIENTOS*]
+Seleccione un procedimiento quirúrgico para ver su descripción.
+[c][/c]`;
+        
+        ver_processNotesFile(notesText);
+
+        document.getElementById('ver_highlight-edit-input').addEventListener('keydown', e => {
+            if (e.key === 'Enter') ver_saveHighlightEdit();
+            else if (e.key === 'Escape') ver_cancelHighlightEdit();
+        });
+        document.getElementById('ver_note-search').addEventListener('input', function() { ver_filterNotes(this.value); });
+        
+        function ver_processNotesFile(text) {
+            ver_notesData = {};
+            const menu = document.getElementById('ver_notes-menu');
+            menu.innerHTML = '';
+            ver_allMenuItems = [];
+            const noteRegex = /\[\*(.*?)\*\]([\s\S]*?)(?=\[\*.*?\*\]|$)/g;
+            let match;
+            while ((match = noteRegex.exec(text)) !== null) {
+                const noteTitle = match[1].trim();
+                const fullContent = match[2].trim();
+                
+                const complicationRegex = /\[c\]([\s\S]*)\[\/c\]/;
+                const compMatch = fullContent.match(complicationRegex);
+                
+                let description = fullContent;
+                let complications = "No especificadas.";
+
+                if(compMatch){
+                    description = fullContent.replace(complicationRegex, '').trim();
+                    complications = compMatch[1].trim();
+                }
+
+                ver_notesData[noteTitle] = {
+                    description: description,
+                    complications: complications
+                };
+                
+                const menuItem = document.createElement('div');
+                menuItem.className = 'menu-item';
+                menuItem.textContent = noteTitle;
+                menuItem.dataset.title = noteTitle;
+                menuItem.dataset.searchText = ver_removeAccents(noteTitle.toLowerCase());
+                menuItem.onclick = () => ver_requestShowNote(noteTitle);
+                menu.appendChild(menuItem);
+                ver_allMenuItems.push(menuItem);
+            }
+            const firstNoteTitle = Object.keys(ver_notesData)[0];
+            if (firstNoteTitle) ver_showNote(firstNoteTitle);
+        }
+
+        function ver_filterNotes(searchText) {
+            const normalizedSearch = ver_removeAccents(searchText.toLowerCase());
+            ver_allMenuItems.forEach(item => {
+                item.style.display = normalizedSearch === '' || item.dataset.searchText.includes(normalizedSearch) ? 'block' : 'none';
+            });
+        }
+
+        function ver_removeAccents(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+
+        function ver_requestShowNote(noteTitle) {
+            if (ver_isEditing && ver_hasChanges()) {
+                document.getElementById('ver_confirm-message').innerHTML = '¿Estás seguro de cambiar de nota?<br>Se perderán los cambios no guardados.';
+                ver_pendingAction = () => { ver_cancelEdit(); ver_showNote(noteTitle); };
+                document.getElementById('ver_confirm-modal').style.display = 'flex';
+            } else {
+                ver_showNote(noteTitle);
+            }
+        }
+        
+        function ver_showNote(noteTitle) {
+            if (ver_isEditing) ver_cancelEdit();
+            ver_allMenuItems.forEach(item => {
+                item.classList.toggle('selected', item.dataset.title === noteTitle);
+                if (item.dataset.title === noteTitle) item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
+
+            const noteData = ver_notesData[noteTitle] || { description: `La nota "${noteTitle}" no existe.`, complications: '' };
+            const descContent = ver_processTextFormatting(noteData.description);
+            const compContent = ver_processTextFormatting(noteData.complications);
+            
+            document.getElementById('ver_html-display').innerHTML = descContent;
+            document.getElementById('ver_complications-display').innerHTML = compContent;
+            
+            document.getElementById('ver_text-display').value = `TÉCNICA:\n${descContent.replace(/<[^>]*>/g, '')}\n\nCOMPLICACIONES:\n${compContent.replace(/<[^>]*>/g, '')}`;
+            ver_currentNote = noteTitle;
+            ver_isEditing = false;
+        }
+
+        function ver_processTextFormatting(text) {
+            return text.replace(/\[h\](.*?)\[\/h\]/g, '<span class="highlight">$1</span>');
+        }
+
+        window.ver_enableEditing = function() {
+            if (!ver_currentNote) return;
+            ver_originalNoteContent.description = document.getElementById('ver_html-display').innerHTML;
+            ver_originalNoteContent.complications = document.getElementById('ver_complications-display').innerHTML;
+
+            document.getElementById('ver_editable-display').innerHTML = ver_originalNoteContent.description;
+            document.getElementById('ver_editable-complications').innerHTML = ver_originalNoteContent.complications;
+
+            document.getElementById('ver_html-display').style.display = 'none';
+            document.getElementById('ver_complications-display').style.display = 'none';
+            document.getElementById('ver_editable-display').style.display = 'block';
+            document.getElementById('ver_editable-complications').style.display = 'block';
+            
+            document.querySelector('#tabVerNotas .edit-buttons').style.display = 'flex';
+            document.getElementById('ver_edit-button').style.display = 'none';
+            ver_isEditing = true;
+            ver_setupHighlightEditors();
+        }
+
+        function ver_setupHighlightEditors() {
+            document.querySelectorAll('#ver_editable-display .highlight, #ver_editable-complications .highlight').forEach(h => {
+                h.addEventListener('click', e => {
+                    e.stopPropagation();
+                    if (ver_currentHighlightElement) ver_cancelHighlightEdit();
+                    ver_currentHighlightElement = h;
+                    h.classList.add('editing');
+                    const rect = h.getBoundingClientRect();
+                    const editContainer = document.getElementById('ver_highlight-edit-container');
+                    const editInput = document.getElementById('ver_highlight-edit-input');
+                    editInput.value = h.textContent;
+                    editContainer.style.display = 'block';
+                    editContainer.style.left = `${rect.left}px`;
+                    editContainer.style.top = `${rect.bottom + 5}px`;
+                    editInput.focus();
+                });
+            });
+            document.addEventListener('click', ver_cancelHighlightEditOutside);
+        }
+
+        function ver_cancelHighlightEditOutside(e) {
+            const editContainer = document.getElementById('ver_highlight-edit-container');
+            if (ver_currentHighlightElement && !editContainer.contains(e.target)) {
+                ver_cancelHighlightEdit();
+            }
+        }
+
+        function ver_saveHighlightEdit() {
+            if (!ver_currentHighlightElement) return;
+            const newText = document.getElementById('ver_highlight-edit-input').value.trim();
+            if (newText) ver_currentHighlightElement.textContent = newText;
+            ver_cancelHighlightEdit();
+        }
+
+        function ver_cancelHighlightEdit() {
+            if (!ver_currentHighlightElement) return;
+            ver_currentHighlightElement.classList.remove('editing');
+            ver_currentHighlightElement = null;
+            document.getElementById('ver_highlight-edit-container').style.display = 'none';
+        }
+
+        window.ver_cancelEdit = function() {
+            document.getElementById('ver_html-display').style.display = 'block';
+            document.getElementById('ver_complications-display').style.display = 'block';
+            document.getElementById('ver_editable-display').style.display = 'none';
+            document.getElementById('ver_editable-complications').style.display = 'none';
+
+            document.querySelector('#tabVerNotas .edit-buttons').style.display = 'none';
+            document.getElementById('ver_edit-button').style.display = 'block';
+            ver_cancelHighlightEdit();
+            document.removeEventListener('click', ver_cancelHighlightEditOutside);
+            ver_isEditing = false;
+        }
+
+        window.ver_saveNote = function() {
+            if (!ver_currentNote) return;
+            
+            let editedDesc = document.getElementById('ver_editable-display').innerHTML.replace(/<span class="highlight">(.*?)<\/span>/g, '[h]$1[/h]');
+            let editedComp = document.getElementById('ver_editable-complications').innerHTML.replace(/<span class="highlight">(.*?)<\/span>/g, '[h]$1[/h]');
+
+            ver_notesData[ver_currentNote] = {
+                description: editedDesc,
+                complications: editedComp
+            };
+            
+            document.getElementById('ver_html-display').innerHTML = ver_processTextFormatting(editedDesc);
+            document.getElementById('ver_complications-display').innerHTML = ver_processTextFormatting(editedComp);
+            
+            ver_cancelEdit();
+            alert('Nota modificada (los cambios son temporales en esta sesión).');
+        }
+
+        function ver_hasChanges() {
+            if (!ver_isEditing) return false;
+            const currentDesc = document.getElementById('ver_editable-display').innerHTML;
+            const currentComp = document.getElementById('ver_editable-complications').innerHTML;
+            return currentDesc !== ver_originalNoteContent.description || currentComp !== ver_originalNoteContent.complications;
+        }
+
+        window.ver_confirmAction = function() {
+            document.getElementById('ver_confirm-modal').style.display = 'none';
+            if (ver_pendingAction) { ver_pendingAction(); ver_pendingAction = null; }
+        }
+
+        window.ver_cancelAction = function() {
+            document.getElementById('ver_confirm-modal').style.display = 'none';
+            ver_pendingAction = null;
+        }
+
+        window.ver_copyToClipboard = function() {
+             const desc = document.getElementById('ver_html-display').textContent;
+             const comps = document.getElementById('ver_complications-display').textContent;
+             const textToCopy = `DESCRIPCIÓN QUIRÚRGICA:\n${desc}\n\nCOMPLICACIONES:\n${comps}`;
+             navigator.clipboard.writeText(textToCopy).then(() => alert('Nota y complicaciones copiadas al portapapeles.'));
+        }
+
+        window.ver_changeFontSize = function(change) {
+            ver_currentFontSize += change;
+            if (ver_currentFontSize < 8) ver_currentFontSize = 8;
+            if (ver_currentFontSize > 36) ver_currentFontSize = 36;
+            const newSize = `${ver_currentFontSize}px`;
+            document.getElementById('ver_font-size-display').textContent = newSize;
+            document.getElementById('ver_html-display').style.fontSize = newSize;
+            document.getElementById('ver_editable-display').style.fontSize = newSize;
+            document.getElementById('ver_complications-display').style.fontSize = newSize;
+            document.getElementById('ver_editable-complications').style.fontSize = newSize;
+        }
+    }
+
+    // --- SCRIPT PESTAÑA 4: CALCULADORA Y NOTAS (ACTUALIZADO) ---
+    function initCalculadoraTab() {
+        const calculator = document.querySelector('#tabCalculadora .calculator');
+        const calculatorScreen = document.querySelector('#tabCalculadora .calculator-screen');
+        const keys = calculator.querySelector('.calculator-keys');
+        const leftColumn = document.querySelector('#tabCalculadora .left-column');
+        const descriptionOutput = document.getElementById('descriptionOutput');
+
+        let displayValue = '0';
+        let justEvaluated = false;
+
+        function updateDisplay() {
+            calculatorScreen.value = displayValue;
+        }
+
+        function flashDisplay() {
+            calculatorScreen.classList.remove('flash');
+            // Forzar reflow para reiniciar la animación
+            void calculatorScreen.offsetWidth;
+            calculatorScreen.classList.add('flash');
+        }
+
+        function isOperator(char) {
+            return ['+', '-', '*', '/'].includes(char);
+        }
+
+        function inputDigit(digit) {
+            if (displayValue === 'Error' || (displayValue === '0' && digit !== '.')) {
+                displayValue = digit;
+            } else if (justEvaluated) {
+                displayValue = digit;
+            } else {
+                displayValue += digit;
+            }
+            justEvaluated = false;
+            updateDisplay();
+        }
+
+        function inputDecimal(dot) {
+            if (displayValue === 'Error' || justEvaluated) {
+                displayValue = '0' + dot;
+                justEvaluated = false;
+                updateDisplay();
+                return;
+            }
+
+            // Obtener el último número de la expresión actual
+            const parts = displayValue.split(/[\+\-\*\/]/);
+            const lastPart = parts[parts.length - 1];
+
+            if (!lastPart.includes(dot)) {
+                displayValue += dot;
+            }
+            updateDisplay();
+        }
+
+        function handleOperator(op) {
+            if (displayValue === 'Error') {
+                displayValue = '0';
+            }
+
+            justEvaluated = false;
+
+            const lastChar = displayValue.slice(-1);
+            if (isOperator(lastChar)) {
+                // Reemplazar el último operador si se presiona otro consecutivamente
+                displayValue = displayValue.slice(0, -1) + op;
+            } else {
+                displayValue += op;
+            }
+            updateDisplay();
+        }
+
+        function clearAll() {
+            displayValue = '0';
+            justEvaluated = false;
+            calculatorScreen.classList.remove('flash');
+            updateDisplay();
+        }
+
+        function calculatePercentage() {
+            if (displayValue === 'Error') return;
+
+            try {
+                // Buscar el último número en la cadena y dividirlo entre 100
+                const match = displayValue.match(/(\d+\.?\d*)$/);
+                if (match) {
+                    const num = parseFloat(match[0]);
+                    const pct = (num / 100).toString();
+                    displayValue = displayValue.slice(0, -match[0].length) + pct;
+                    updateDisplay();
+                }
+            } catch (e) {
+                displayValue = 'Error';
+                updateDisplay();
+            }
+        }
+
+        function handleEquals() {
+            if (displayValue === 'Error') {
+                clearAll();
+                return;
+            }
+
+            let expr = displayValue;
+            
+            // Si termina en operador, eliminar el último operador antes de evaluar
+            while (isOperator(expr.slice(-1))) {
+                expr = expr.slice(0, -1);
+            }
+
+            if (!expr) {
+                displayValue = '0';
+                updateDisplay();
+                return;
+            }
+
+            try {
+                // Evaluar la expresión matemática con seguridad
+                const result = Function('"use strict"; return (' + expr + ')')();
+                if (!isFinite(result) || isNaN(result)) {
+                    displayValue = 'Error';
+                } else {
+                    displayValue = `${parseFloat(result.toFixed(7))}`;
+                    flashDisplay(); // Destello visual del resultado
+                }
+            } catch (e) {
+                displayValue = 'Error';
+            }
+
+            justEvaluated = true;
+            updateDisplay();
+        }
+
+        keys.addEventListener('click', (event) => {
+            const { target } = event;
+            const value = target.value;
+
+            if (!target.matches('button')) {
+                return;
+            }
+
+            switch (value) {
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                    handleOperator(value);
+                    break;
+                case '=':
+                    handleEquals();
+                    break;
+                case '.':
+                    inputDecimal(value);
+                    break;
+                case 'C':
+                    clearAll();
+                    break;
+                case '%':
+                    calculatePercentage();
+                    break;
+                default:
+                    if (Number.isFinite(parseFloat(value))) {
+                        inputDigit(value);
+                    }
+                    break;
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            const key = event.key;
+            if (document.getElementById('tabCalculadora').style.display !== 'flex') return;
+
+            if (Number.isFinite(parseFloat(key))) inputDigit(key);
+            else if (key === '.') inputDecimal(key);
+            else if (key === '+' || key === '-') handleOperator(key);
+            else if (key === '*' || key === 'x' || key === 'X') handleOperator('*');
+            else if (key === '/' || key === '÷') handleOperator('/');
+            else if (key === 'Enter' || key === '=') handleEquals();
+            else if (key === 'Escape' || key === 'c' || key === 'C') clearAll();
+            else if (key === '%') calculatePercentage();
+        });
+
+        leftColumn.addEventListener('click', (event) => {
+            const { target } = event;
+            if (target.classList.contains('title-button')) {
+                const description = target.dataset.description;
+                descriptionOutput.textContent = description;
+            }
+        });
+        
+        updateDisplay();
+    }
+</script>
+
 </body>
 </html>
